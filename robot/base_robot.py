@@ -25,6 +25,7 @@ class BaseRobot(object):
             exit(-1)
         self.LOG.info("初始化成功")
         self.wxid = self.sdk.WxGetSelfWxid()
+        self.allContacts = self.getAllContacts()
 
     def enableRecvMsg(self):
         self.sdk.WxEnableRecvMsg(self.onMsg)
@@ -33,8 +34,11 @@ class BaseRobot(object):
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:
-            # 这里只简单补全数量，后续可以补充群昵称（通过 SQL 获取）
-            ats = " @" * len(at_list.split(","))
+            wxids = at_list.split(",")
+            for wxid in wxids:
+                # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
+                ats = f" @{self.allContacts[wxid]}"
+
         self.sdk.WxSendTextMsg(receiver, f"{msg}{ats}", at_list)
 
     def isGroupChat(self, msg):
@@ -60,6 +64,13 @@ class BaseRobot(object):
         rmsg["content"] = msg.content
 
         self.LOG.info(rmsg)
+
+    def getAllContacts(self):
+        """ 获取联系人（包括好友、公众号、服务号、群成员……）
+            {"wxid": "NickName"}
+        """
+        contacts = self.sdk.WxExecDbQuery("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
+        return {contact["UserName"]: contact["NickName"] for contact in contacts}
 
     def processMsg(self, msg) -> None:
         raise NotImplementedError("Method [processMsg] should be implemented.")
