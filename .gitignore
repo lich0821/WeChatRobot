@@ -6,3 +6,5 @@ __pycache__
 
 *.log
 *.log.*
+
+robot/config.yaml
