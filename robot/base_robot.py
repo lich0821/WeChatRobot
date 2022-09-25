@@ -1,0 +1,65 @@
+# -*- coding: utf-8 -*-
+
+import re
+import logging
+
+
+class BaseRobot(object):
+    def __init__(self, sdk, config) -> None:
+        self.sdk = sdk
+        self.config = config
+        self.LOG = logging.getLogger("Robot")
+
+    def onMsg(self, msg) -> int:
+        try:
+            self.processMsg(msg)
+        except Exception as e:
+            self.LOG.error(e)
+            self.printRawMsg(msg)
+
+        return 0
+
+    def initSDK(self):
+        if self.sdk.WxInitSDK() != 0:
+            self.LOG.error("初始化失败")
+            exit(-1)
+        self.LOG.info("初始化成功")
+        self.wxid = self.sdk.WxGetSelfWxid()
+
+    def enableRecvMsg(self):
+        self.sdk.WxEnableRecvMsg(self.onMsg)
+
+    def sendTextMsg(self, receiver, msg, at_list=""):
+        # msg 中需要有 @ 名单中一样数量的 @
+        ats = ""
+        if at_list:
+            # 这里只简单补全数量，后续可以补充群昵称（通过 SQL 获取）
+            ats = " @" * len(at_list.split(","))
+        self.sdk.WxSendTextMsg(receiver, f"{msg}{ats}", at_list)
+
+    def isGroupChat(self, msg):
+        return msg.source == 1
+
+    def isAt(self, msg, exclude_at_all=True):
+        atall = []
+        atuserlist = re.findall(f"<atuserlist>.*({self.wxid}).*</atuserlist>", msg.xml)
+        if exclude_at_all:
+            atall = re.findall(f"@所有人", msg.content)  # 排除@所有人
+
+        return (len(atuserlist) > 0) and (len(atall) == 0)
+
+    def printRawMsg(self, msg) -> None:
+        rmsg = {}
+        rmsg["id"] = msg.id
+        rmsg["self"] = msg.self
+        rmsg["wxId"] = msg.wxId
+        rmsg["roomId"] = msg.roomId
+        rmsg["type"] = msg.type
+        rmsg["source"] = msg.source
+        rmsg["xml"] = msg.xml
+        rmsg["content"] = msg.content
+
+        self.LOG.info(rmsg)
+
+    def processMsg(self, msg) -> None:
+        raise NotImplementedError("Method [processMsg] should be implemented.")
