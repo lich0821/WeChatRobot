@@ -2,6 +2,7 @@
 
 import re
 import logging
+import xml.etree.ElementTree as ET
 
 
 class BaseRobot(object):
@@ -71,6 +72,16 @@ class BaseRobot(object):
         """
         contacts = self.sdk.WxExecDbQuery("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
         return {contact["UserName"]: contact["NickName"] for contact in contacts}
+
+    def autoAcceptFriendRequest(self, msg):
+        try:
+            xml = ET.fromstring(msg.content)
+            v3 = xml.attrib["encryptusername"]
+            v4 = xml.attrib["ticket"]
+            self.sdk.WxAcceptNewFriend(v3, v4)
+
+        except Exception as e:
+            self.LOG.error(f"同意好友出错：{e}")
 
     def processMsg(self, msg) -> None:
         raise NotImplementedError("Method [processMsg] should be implemented.")
