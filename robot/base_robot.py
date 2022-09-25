@@ -37,7 +37,7 @@ class BaseRobot(object):
             wxids = at_list.split(",")
             for wxid in wxids:
                 # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
-                ats = f" @{self.allContacts[wxid]}"
+                ats = f" @{self.allContacts.get(wxid, '')}"
 
         self.sdk.WxSendTextMsg(receiver, f"{msg}{ats}", at_list)
 
