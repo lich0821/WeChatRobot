@@ -3,6 +3,7 @@
 
 import re
 
+from func_chengyu import cy
 import robot.sdk.wcferry as WxSDK
 from robot.base_robot import BaseRobot
 from robot.configuration import Config
@@ -15,6 +16,23 @@ class Robot(BaseRobot):
     def __init__(self, sdk: WxSDK, config: Config) -> None:
         super().__init__(sdk)
         self.config = config
+
+    def toChengyu(self, msg):
+        texts = re.findall(r"^([#|?|？])(.*)$", msg.content)
+        # [('#', '天天向上')]
+        if texts:
+            flag = texts[0][0]
+            text = texts[0][1]
+            if flag == "#":  # 接龙
+                if cy.isChengyu(text):
+                    rsp = cy.getNext(text)
+                    if rsp:
+                        self.sendTextMsg(msg.roomId, rsp)
+            elif flag in ["?", "？"]:  # 查词
+                if cy.isChengyu(text):
+                    rsp = cy.getMeaning(text)
+                    if rsp:
+                        self.sendTextMsg(msg.roomId, rsp)
 
     def processMsg(self, msg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -30,6 +48,9 @@ class Robot(BaseRobot):
             if self.isAt(msg):   # 被@
                 rsp = "你@我干嘛？"
                 self.sendTextMsg(msg.roomId, rsp, msg.wxId)
+
+            else:
+                self.toChengyu(msg)
 
         # 非群聊信息
         elif msg.type == 37:     # 好友请求
