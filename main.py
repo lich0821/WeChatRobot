@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-from xmlrpc.client import Boolean
 
 from func_chengyu import cy
 import robot.sdk.wcferry as WxSDK
@@ -18,7 +17,7 @@ class Robot(BaseRobot):
         super().__init__(sdk)
         self.config = config
 
-    def toAt(self, msg) -> Boolean:
+    def toAt(self, msg) -> bool:
         """
         处理被 @ 消息，现在只固定回复: "你@我干嘛？"
         :param msg: 微信消息结构
@@ -30,7 +29,7 @@ class Robot(BaseRobot):
 
         return status
 
-    def toChengyu(self, msg) -> Boolean:
+    def toChengyu(self, msg) -> bool:
         """
         处理成语查询/接龙消息
         :param msg: 微信消息结构
@@ -56,6 +55,11 @@ class Robot(BaseRobot):
                         status = True
 
         return status
+
+    def toChitchat(self, msg):
+        """闲聊，目前未实现
+        """
+        pass
 
     def processMsg(self, msg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -84,6 +88,16 @@ class Robot(BaseRobot):
             if nickName:
                 # 添加了好友，更新好友列表
                 self.allContacts[msg.wxId] = nickName
+
+        elif msg.type == 0x01:   # 文本消息
+            # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
+            if msg.self and msg.content == "^更新$":
+                self.config.reload()
+                self.LOG.info("已更新")
+                return
+
+            # 闲聊
+            self.toChitchat(msg)
 
 
 def weather_report(robot: Robot):
