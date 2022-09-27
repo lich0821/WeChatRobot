@@ -20,7 +20,7 @@ logging:
       class: logging.handlers.RotatingFileHandler
       level: INFO
       formatter: simple
-      filename: wcai.log
+      filename: wx_info.log
       maxBytes: 10485760 # 10MB
       backupCount: 20
       encoding: utf8
@@ -29,7 +29,7 @@ logging:
       class: logging.handlers.RotatingFileHandler
       level: ERROR
       formatter: error
-      filename: errors.log
+      filename: wx_error.log
       maxBytes: 10485760 # 10MB
       backupCount: 20
       encoding: utf8
