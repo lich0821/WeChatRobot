@@ -46,7 +46,7 @@ class BaseRobot(Job):
                 # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
                 ats = f" @{self.allContacts.get(wxid, '')}"
 
-        self.LOG.info(f"{msg}{ats}")
+        self.LOG.info(f"To {receiver}: {msg}{ats}")
         self.sdk.WxSendTextMsg(receiver, f"{msg}{ats}", at_list)
 
     def isGroupChat(self, msg):
