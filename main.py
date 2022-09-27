@@ -40,8 +40,9 @@ class Robot(BaseRobot):
 
         self.printRawMsg(msg)  # 打印信息
 
-        # 如果在群里被 @，回复发信人：“收到你的消息了！” 并 @他
-        if self.isGroupChat(msg):  # 是群消息
+        # 群聊消息
+        if self.isGroupChat(msg):
+            # 如果在群里被 @，回复发信人：“收到你的消息了！” 并 @他
             if msg.roomId not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
 
