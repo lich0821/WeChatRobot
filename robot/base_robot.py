@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import re
+import time
 import logging
 import xml.etree.ElementTree as ET
 
+from robot.job_mgmt import Job
 
-class BaseRobot(object):
+
+class BaseRobot(Job):
+    """
+    机器人基类。用户需要实现 `processMsg` 方法以个性化处理消息。
+    """
+
     def __init__(self, sdk, config) -> None:
         self.sdk = sdk
         self.config = config
@@ -67,8 +74,9 @@ class BaseRobot(object):
         self.LOG.info(rmsg)
 
     def getAllContacts(self):
-        """ 获取联系人（包括好友、公众号、服务号、群成员……）
-            {"wxid": "NickName"}
+        """
+        获取联系人（包括好友、公众号、服务号、群成员……）
+        格式: {"wxid": "NickName"}
         """
         contacts = self.sdk.WxExecDbQuery("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
         return {contact["UserName"]: contact["NickName"] for contact in contacts}
@@ -85,3 +93,11 @@ class BaseRobot(object):
 
     def processMsg(self, msg) -> None:
         raise NotImplementedError("Method [processMsg] should be implemented.")
+
+    def keepRunningAndBlockProcess(self) -> None:
+        """
+        保持机器人运行，不让进程退出
+        """
+        while True:
+            self.runPendingJobs()
+            time.sleep(1)

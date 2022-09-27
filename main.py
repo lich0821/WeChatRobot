@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import time
 
 import robot.sdk.wcferry as WxSDK
 from robot.base_robot import BaseRobot
@@ -10,6 +9,9 @@ from robot.configuration import Config
 
 
 class Robot(BaseRobot):
+    """个性化自己的机器人
+    """
+
     def __init__(self, sdk: WxSDK, config: Config) -> None:
         super().__init__(sdk, config)
 
@@ -36,14 +38,33 @@ class Robot(BaseRobot):
                 self.allContacts[msg.wxId] = nickName
 
 
+def weather_report(robot: Robot):
+    """模拟发送天气预报
+    """
+    # 获取接收人
+    receivers = ["filehelper"]
+
+    # 获取天气，需要自己实现，可以参考 https://gitee.com/lch0821/WeatherScrapy 获取天气。
+    report = "这就是获取到的天气情况了"
+
+    for r in receivers:
+        robot.sendTextMsg(r, report)
+
+
 def main():
     robot = Robot(WxSDK, Config())
+
+    # 初始化机器人
     robot.initSDK()
+
+    # 接收消息
     robot.enableRecvMsg()
 
-    while True:
-        time.sleep(1)
-        # 不让进程退出，否则机器人就退出了
+    # 每天7点发送天气预报
+    robot.onEveryTime("07:00", weather_report, robot=robot)
+
+    # 让机器人一直跑
+    robot.keepRunningAndBlockProcess()
 
 
 if __name__ == "__main__":
