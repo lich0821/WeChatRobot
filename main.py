@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from xmlrpc.client import Boolean
 
 from func_chengyu import cy
 import robot.sdk.wcferry as WxSDK
@@ -17,7 +18,25 @@ class Robot(BaseRobot):
         super().__init__(sdk)
         self.config = config
 
-    def toChengyu(self, msg):
+    def toAt(self, msg) -> Boolean:
+        """
+        处理被 @ 消息，现在只固定回复: "你@我干嘛？"
+        :param msg: 微信消息结构
+        :return: 处理状态，`True` 成功，`False` 失败
+        """
+        status = True
+        rsp = "你@我干嘛？"
+        self.sendTextMsg(msg.roomId, rsp, msg.wxId)
+
+        return status
+
+    def toChengyu(self, msg) -> Boolean:
+        """
+        处理成语查询/接龙消息
+        :param msg: 微信消息结构
+        :return: 处理状态，`True` 成功，`False` 失败
+        """
+        status = False
         texts = re.findall(r"^([#|?|？])(.*)$", msg.content)
         # [('#', '天天向上')]
         if texts:
@@ -28,11 +47,15 @@ class Robot(BaseRobot):
                     rsp = cy.getNext(text)
                     if rsp:
                         self.sendTextMsg(msg.roomId, rsp)
+                        status = True
             elif flag in ["?", "？"]:  # 查词
                 if cy.isChengyu(text):
                     rsp = cy.getMeaning(text)
                     if rsp:
                         self.sendTextMsg(msg.roomId, rsp)
+                        status = True
+
+        return status
 
     def processMsg(self, msg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -47,10 +70,9 @@ class Robot(BaseRobot):
                 return
 
             if self.isAt(msg):   # 被@
-                rsp = "你@我干嘛？"
-                self.sendTextMsg(msg.roomId, rsp, msg.wxId)
+                self.toAt(msg)
 
-            else:
+            else:                # 其他消息
                 self.toChengyu(msg)
 
         # 非群聊信息
