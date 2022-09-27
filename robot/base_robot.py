@@ -13,9 +13,8 @@ class BaseRobot(Job):
     机器人基类。用户需要实现 `processMsg` 方法以个性化处理消息。
     """
 
-    def __init__(self, sdk, config) -> None:
+    def __init__(self, sdk) -> None:
         self.sdk = sdk
-        self.config = config
         self.LOG = logging.getLogger("Robot")
 
     def onMsg(self, msg) -> int:
