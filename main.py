@@ -7,7 +7,7 @@ from wcferry import Wcf
 from robot import Robot
 
 
-def weather_report(robot: Robot):
+def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
     """
     # 获取接收人

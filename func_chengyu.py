@@ -23,10 +23,10 @@ class Chengyu(object):
 
         return cys, zis, yins
 
-    def isChengyu(self, cy):
+    def isChengyu(self, cy: str) -> bool:
         return self.cys.get(cy, None) is not None
 
-    def getNext(self, cy, tongyin=True) -> str:
+    def getNext(self, cy: str, tongyin: bool = True) -> str:
         """获取下一个成语
             cy: 当前成语
             tongyin: 是否允许同音字
@@ -56,7 +56,7 @@ class Chengyu(object):
 
         return None
 
-    def getMeaning(self, cy):
+    def getMeaning(self, cy: str) -> str:
         ress = self.df[self.df["chengyu"] == cy].to_dict(orient="records")
         if ress:
             res = ress[0]

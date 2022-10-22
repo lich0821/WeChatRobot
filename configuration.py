@@ -23,7 +23,7 @@ class Config(object):
 
         return yconfig
 
-    def reload(self):
+    def reload(self) -> None:
         yconfig = self._load_config()
         logging.config.dictConfig(yconfig["logging"])
         self.GROUPS = yconfig["groups"]["enable"]
