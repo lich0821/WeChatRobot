@@ -4,7 +4,8 @@
 *pyc
 __pycache__
 
+logs/
 *.log
 *.log.*
 
-robot/config.yaml
+config.yaml
