@@ -16,7 +16,7 @@ class Config(object):
             with open(f"{pwd}/config.yaml", "rb") as fp:
                 yconfig = yaml.safe_load(fp)
         except FileNotFoundError:
-            with open(f"{pwd}/../config.yaml.template", "rb") as fp:
+            with open(f"{pwd}/config.yaml.template", "rb") as fp:
                 yconfig = yaml.safe_load(fp)
                 with open(f"{pwd}/config.yaml", "w+") as yf:
                     yaml.dump(yconfig, yf, default_flow_style=False)
