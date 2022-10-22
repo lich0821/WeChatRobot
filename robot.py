@@ -99,7 +99,7 @@ class Robot(Job):
             # 闲聊
             self.toChitchat(msg)
 
-    def onMsg(self, msg) -> int:
+    def onMsg(self, msg: Wcf.WxMsg) -> int:
         self.LOG.info(msg)  # 打印信息
         try:
             self.processMsg(msg)
@@ -111,7 +111,7 @@ class Robot(Job):
     def enableRecvMsg(self) -> None:
         self.wcf.enable_recv_msg(self.onMsg)
 
-    def sendTextMsg(self, msg, receiver, at_list=""):
+    def sendTextMsg(self, msg: str, receiver: str, at_list: str = ""):
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:
@@ -139,7 +139,7 @@ class Robot(Job):
             self.runPendingJobs()
             time.sleep(1)
 
-    def autoAcceptFriendRequest(self, msg):
+    def autoAcceptFriendRequest(self, msg: Wcf.WxMsg):
         try:
             xml = ET.fromstring(msg.content)
             v3 = xml.attrib["encryptusername"]
@@ -149,7 +149,7 @@ class Robot(Job):
         except Exception as e:
             self.LOG.error(f"同意好友出错：{e}")
 
-    def sayHiToNewFriend(self, msg):
+    def sayHiToNewFriend(self, msg: Wcf.WxMsg):
         nickName = re.findall(r"你已添加了(.*)，现在可以开始聊天了。", msg.content)
         if nickName:
             # 添加了好友，更新好友列表
