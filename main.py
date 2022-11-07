@@ -10,6 +10,7 @@ from robot import Robot
 def weather_report(robot: Robot) -> None:
     """模拟发送天气预报
     """
+
     # 获取接收人
     receivers = ["filehelper"]
 
@@ -18,6 +19,7 @@ def weather_report(robot: Robot) -> None:
 
     for r in receivers:
         robot.sendTextMsg(report, r)
+        # robot.sendTextMsg(report, r, "nofity@all")   # 发送消息并@所有人
 
 
 def main():
@@ -30,7 +32,9 @@ def main():
     signal.signal(signal.SIGINT, handler)
 
     robot = Robot(wcf)
-    robot.LOG.info("机器人已启动")
+    robot.LOG.info("正在启动机器人···")
+    # 机器人启动发送测试消息
+    robot.sendTextMsg("机器人启动成功！", "filehelper")
 
     # 接收消息
     robot.enableRecvMsg()
