@@ -130,8 +130,8 @@ class Robot(Job):
 
                 ats = f" @{self.allContacts.get(wxid, '')}"
 
-        self.LOG.info(f"To {receiver}: {msg}{ats}")
         # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
+        self.LOG.info(f"To {receiver}: {msg}{ats}")
         self.wcf.send_text(f"{msg}{ats}", receiver, at_list)
 
     def getAllContacts(self):
@@ -139,10 +139,8 @@ class Robot(Job):
         获取联系人（包括好友、公众号、服务号、群成员……）
         格式: {"wxid": "NickName"}
         """
-        contacts = self.wcf.query_sql(
-            "MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
-        return {contact["UserName"]: contact["NickName"]
-                for contact in contacts}
+        contacts = self.wcf.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
+        return {contact["UserName"]: contact["NickName"]for contact in contacts}
 
     def keepRunningAndBlockProcess(self) -> None:
         """
