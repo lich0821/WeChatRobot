@@ -12,6 +12,7 @@ from func_chengyu import cy
 from job_mgmt import Job
 
 
+
 class Robot(Job):
     """个性化自己的机器人
     """
@@ -21,8 +22,9 @@ class Robot(Job):
         self.config = Config()
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
-        self.allContacts = self.getAllContacts()
-
+        #self.allContacts = self.getAllContacts() 
+        
+        
     def toAt(self, msg: Wcf.WxMsg) -> bool:
         """
         处理被 @ 消息，现在只固定回复: "你@我干嘛？"
@@ -70,6 +72,15 @@ class Robot(Job):
     def processMsg(self, msg: Wcf.WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
         """
+        
+        """ 此处可进行自定义发送的内容,如通过关键字自动获取当前天气信息，并发送到对应的群组@发送者
+        群号：msg.roomid  微信ID：msg.sender  消息内容：msg.content
+        content = "天气查询"
+        receivers = msg.roomid
+        self.sendTextMsg(content, receivers, msg.sender)
+        """
+
+        
         # 群聊消息
         if msg.from_group():
             # 如果在群里被 @，回复发信人：“收到你的消息了！” 并 @他
@@ -101,6 +112,7 @@ class Robot(Job):
 
     def onMsg(self, msg: Wcf.WxMsg) -> int:
         self.LOG.info(msg)  # 打印信息
+        
         try:
             self.processMsg(msg)
         except Exception as e:
@@ -117,7 +129,14 @@ class Robot(Job):
         if at_list:
             wxids = at_list.split(",")
             for wxid in wxids:
-                # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
+                # 这里偷个懒，直接 @昵称
+                        
+                """ 若出现直接 @wxid，则要通过 MicroMsg.db 里的 ChatRoom 表解析群昵称，取消此处注释，并注释141行
+                userInfo = self.getAllContacts()
+                everyUser = {'notify@all': '所有人'}
+                userInfo.update(everyUser) # 追加dict @所有人所需字段
+                ats = f" @{userInfo[wxid]}"
+                """
                 ats = f" @{self.allContacts.get(wxid, '')}"
 
         self.LOG.info(f"To {receiver}: {msg}{ats}")
