@@ -131,6 +131,7 @@ class Robot(Job):
                 ats = f" @{self.allContacts.get(wxid, '')}"
 
         self.LOG.info(f"To {receiver}: {msg}{ats}")
+        # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
         self.wcf.send_text(f"{msg}{ats}", receiver, at_list)
 
     def getAllContacts(self):

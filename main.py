@@ -40,7 +40,7 @@ def main():
     robot.enableRecvMsg()
 
     # 每天7点发送天气预报
-    robot.onEveryTime("00:30", weather_report, robot=robot)
+    robot.onEveryTime("07:00", weather_report, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
