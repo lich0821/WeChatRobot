@@ -17,3 +17,5 @@ pip install -r requirements
 python main.py
 # 如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。
 ```
+
+![Demo](demo.gif)
