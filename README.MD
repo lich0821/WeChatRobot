@@ -20,6 +20,8 @@ python main.py
 
 ![Demo](demo.gif)
 
+👉 [视频教程](https://mp.weixin.qq.com/s/omuSBeZRKSjo0PEtjwey7A)
+
 欢迎加群交流，后台回复 `WeChatFerry `：
 
 ![碲矿](TEQuant.jpeg)
