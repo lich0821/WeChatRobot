@@ -33,6 +33,7 @@ def main():
 
     robot = Robot(wcf)
     robot.LOG.info("正在启动机器人···")
+
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
