@@ -19,3 +19,6 @@ python main.py
 ```
 
 ![Demo](demo.gif)
+
+欢迎加群交流，后台回复 `WeChatFerry `：
+![碲矿](TEQuant.jpeg)
