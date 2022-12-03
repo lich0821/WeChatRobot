@@ -9,7 +9,7 @@
 # 升级 pip
 python -m pip install -U pip
 # 安装必要依赖
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 3. 运行
