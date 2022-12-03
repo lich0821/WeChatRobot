@@ -12,7 +12,15 @@ python -m pip install -U pip
 pip install -r requirements.txt
 ```
 
-3. 运行
+3. 按需修改配置
+从配置模板 `config.yaml.template` 复制一份配置文件 `config.yaml`，按需修改其中的配置。
+为了响应群聊消息，需要添加相应的 `roomId`：
+```yaml
+groups:
+  enable: [] # 允许响应的群 roomId，可以通过 WxGetContacts 获取
+```
+
+4. 运行
 ```sh
 python main.py
 # 如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。
