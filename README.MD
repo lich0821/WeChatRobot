@@ -15,10 +15,17 @@ pip install -r requirements.txt
 3. 按需修改配置
 
 从配置模板 `config.yaml.template` 复制一份配置文件 `config.yaml`，按需修改其中的配置。
-为了响应群聊消息，需要添加相应的 `roomId`：
+
+* 为了响应群聊消息，需要添加相应的 `roomId`：
 ```yaml
 groups:
   enable: [] # 允许响应的群 roomId，可以通过 WxGetContacts 获取
+```
+
+* 为了使用ChatGPT，需要配置OpenAI的Key
+```yaml
+chatgpt:
+  key: xxxxxxxxxxxxxxxxxxxxx # 你的 OpenAI Key
 ```
 
 4. 运行
