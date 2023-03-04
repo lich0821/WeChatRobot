@@ -40,3 +40,6 @@ logging:
 
 groups:
   enable: [] # 允许响应的群 roomId，可以通过 WxGetContacts 获取
+
+chatgpt:
+  key: your key

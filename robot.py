@@ -9,6 +9,7 @@ from wcferry import Wcf
 
 from configuration import Config
 from func_chengyu import cy
+from func_chatgpt import ChatGPT
 from job_mgmt import Job
 
 
@@ -22,6 +23,7 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
+        self.chat = ChatGPT(self.config.CHAT_KEY)
 
     def toAt(self, msg: Wcf.WxMsg) -> bool:
         """
@@ -29,11 +31,7 @@ class Robot(Job):
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
-        status = True
-        rsp = "你@我干嘛？"
-        self.sendTextMsg(rsp, msg.roomid, msg.sender)
-
-        return status
+        return self.toChitchat(msg)
 
     def toChengyu(self, msg: Wcf.WxMsg) -> bool:
         """
@@ -62,10 +60,21 @@ class Robot(Job):
 
         return status
 
-    def toChitchat(self, msg: Wcf.WxMsg) -> None:
-        """闲聊，目前未实现
+    def toChitchat(self, msg: Wcf.WxMsg) -> bool:
+        """闲聊，接入 ChatGPT
         """
-        pass
+        q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+        rsp = self.chat.get_answer(q)
+        if rsp:
+            if msg.from_group():
+                self.sendTextMsg(rsp, msg.roomid, msg.sender)
+            else:
+                self.sendTextMsg(rsp, msg.sender)
+
+            return True
+        else:
+            self.LOG.error(f"无法从ChatGPT获得答案")
+            return False
 
     def processMsg(self, msg: Wcf.WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -88,8 +97,10 @@ class Robot(Job):
             else:                # 其他消息
                 self.toChengyu(msg)
 
-        # 非群聊信息
-        elif msg.type == 37:     # 好友请求
+            return  # 处理完群聊信息，后面就不需要处理了
+
+        # 非群聊信息，按消息类型进行处理
+        if msg.type == 37:     # 好友请求
             self.autoAcceptFriendRequest(msg)
 
         elif msg.type == 10000:  # 系统信息
@@ -100,15 +111,12 @@ class Robot(Job):
             if msg.from_self() and msg.content == "^更新$":
                 self.config.reload()
                 self.LOG.info("已更新")
-                return
-
-            # 闲聊
-            self.toChitchat(msg)
+            else:
+                self.toChitchat(msg)  # 闲聊
 
     def onMsg(self, msg: Wcf.WxMsg) -> int:
-        self.LOG.info(msg)  # 打印信息
-
         try:
+            self.LOG.info(msg)  # 打印信息
             self.processMsg(msg)
         except Exception as e:
             self.LOG.error(e)

@@ -23,7 +23,7 @@ def weather_report(robot: Robot) -> None:
 
 
 def main():
-    wcf = Wcf()
+    wcf = Wcf(debug=True)
 
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境

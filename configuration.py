@@ -27,3 +27,4 @@ class Config(object):
         yconfig = self._load_config()
         logging.config.dictConfig(yconfig["logging"])
         self.GROUPS = yconfig["groups"]["enable"]
+        self.CHAT_KEY = yconfig["chatgpt"]["key"]
