@@ -50,7 +50,6 @@ class ChatGPT():
         now_time = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
         time_mk = "当需要回答时间时请直接参考回复:"
-        time_response = "现在的时间是"
         # 初始化聊天记录,组装系统信息
         if wxid not in self.conversation_list.keys():
             question_ = [
