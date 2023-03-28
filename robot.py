@@ -148,6 +148,7 @@ class Robot(Job):
                 ats = f" @{self.allContacts[wxid]}"
 
         # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
+        ats = ats.strip()
         if ats == "":
             self.LOG.info(f"To {receiver}: {msg}")
             self.wcf.send_text(f"{msg}", receiver, at_list)
