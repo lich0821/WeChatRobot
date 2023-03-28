@@ -23,7 +23,7 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-        self.chat = ChatGPT(self.config.CHAT_KEY, self.config.API_BASE)
+        self.chat = ChatGPT(self.config.CHAT_KEY, self.config.CHAT_API)
 
     def toAt(self, msg: Wcf.WxMsg) -> bool:
         """
@@ -31,8 +31,6 @@ class Robot(Job):
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
-        print("消息内容：👇")
-        print(msg.content)
         return self.toChitchat(msg)
 
     def toChengyu(self, msg: Wcf.WxMsg) -> bool:
@@ -145,7 +143,7 @@ class Robot(Job):
             wxids = at_list.split(",")
             for wxid in wxids:
                 # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
-                ats = f" @{self.allContacts[wxid]}"
+                ats = f" @{self.allContacts.get(wxid,'')}"
 
         # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
         ats = ats.strip()
