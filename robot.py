@@ -23,7 +23,7 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-        self.chat = ChatGPT(self.config.CHAT_KEY)
+        self.chat = ChatGPT(self.config.CHAT_KEY, self.config.CHAT_API)
 
     def toAt(self, msg: Wcf.WxMsg) -> bool:
         """
@@ -64,7 +64,7 @@ class Robot(Job):
         """闲聊，接入 ChatGPT
         """
         q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
-        rsp = self.chat.get_answer(q)
+        rsp = self.chat.get_answer(q,(msg.roomid if msg.from_group() else msg.sender))
         if rsp:
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
@@ -141,8 +141,12 @@ class Robot(Job):
                 ats = f" @{self.allContacts.get(wxid, '')}"
 
         # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
-        self.LOG.info(f"To {receiver}: {msg}{ats}")
-        self.wcf.send_text(f"{msg}{ats}", receiver, at_list)
+        if ats == "":
+            self.LOG.info(f"To {receiver}: {msg}")
+            self.wcf.send_text(f"{msg}", receiver, at_list)
+        else:
+            self.LOG.info(f"To {receiver}: {ats}\r{msg}")
+            self.wcf.send_text(f"{ats}\n\n{msg}", receiver, at_list)
 
     def getAllContacts(self) -> dict:
         """

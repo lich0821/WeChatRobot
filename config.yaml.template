@@ -43,3 +43,4 @@ groups:
 
 chatgpt:
   key: your key
+  api: https://api.openai.com/v1
