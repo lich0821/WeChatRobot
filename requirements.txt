@@ -3,3 +3,6 @@ pandas
 pyyaml
 schedule
 wcferry
+
+requests
+yaml

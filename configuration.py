@@ -28,3 +28,4 @@ class Config(object):
         logging.config.dictConfig(yconfig["logging"])
         self.GROUPS = yconfig["groups"]["enable"]
         self.CHAT_KEY = yconfig["chatgpt"]["key"]
+        self.API_BASE = yconfig["chatgpt"]["api"]

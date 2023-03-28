@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import re
 import time
-import logging
 import xml.etree.ElementTree as ET
 
 from wcferry import Wcf
 
 from configuration import Config
-from func_chengyu import cy
 from func_chatgpt import ChatGPT
+from func_chengyu import cy
 from job_mgmt import Job
 
 
@@ -23,7 +23,7 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-        self.chat = ChatGPT(self.config.CHAT_KEY)
+        self.chat = ChatGPT(self.config.CHAT_KEY, self.config.API_BASE)
 
     def toAt(self, msg: Wcf.WxMsg) -> bool:
         """
@@ -31,6 +31,8 @@ class Robot(Job):
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
+        print("消息内容：👇")
+        print(msg.content)
         return self.toChitchat(msg)
 
     def toChengyu(self, msg: Wcf.WxMsg) -> bool:
@@ -64,17 +66,17 @@ class Robot(Job):
         """闲聊，接入 ChatGPT
         """
         q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
-        rsp = self.chat.get_answer(q)
+        rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
         if rsp:
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
             else:
                 self.sendTextMsg(rsp, msg.sender)
-
-            return True
         else:
             self.LOG.error(f"无法从ChatGPT获得答案")
             return False
+
+        return True
 
     def processMsg(self, msg: Wcf.WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -91,26 +93,28 @@ class Robot(Job):
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
 
-            if msg.is_at(self.wxid):   # 被@
+            if msg.is_at(self.wxid):  # 被@
                 self.toAt(msg)
 
-            else:                # 其他消息
+            else:  # 其他消息
                 self.toChengyu(msg)
+                return
 
             return  # 处理完群聊信息，后面就不需要处理了
 
         # 非群聊信息，按消息类型进行处理
-        if msg.type == 37:     # 好友请求
+        if msg.type == 37:  # 好友请求
             self.autoAcceptFriendRequest(msg)
 
         elif msg.type == 10000:  # 系统信息
             self.sayHiToNewFriend(msg)
 
-        elif msg.type == 0x01:   # 文本消息
+        elif msg.type == 0x01:  # 文本消息
             # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
             if msg.from_self() and msg.content == "^更新$":
                 self.config.reload()
                 self.LOG.info("已更新")
+
             else:
                 self.toChitchat(msg)  # 闲聊
 
@@ -126,6 +130,9 @@ class Robot(Job):
     def enableRecvMsg(self) -> None:
         self.wcf.enable_recv_msg(self.onMsg)
 
+    def sendImageMsg(self, path: str, receiver: str) -> None:
+        self.wcf.send_image(self, path, receiver)
+
     def sendTextMsg(self, msg: str, receiver: str, at_list: str = "") -> None:
         """ 发送消息
         :param msg: 消息字符串
@@ -138,11 +145,15 @@ class Robot(Job):
             wxids = at_list.split(",")
             for wxid in wxids:
                 # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
-                ats = f" @{self.allContacts.get(wxid, '')}"
+                ats = f" @{self.allContacts[wxid]}"
 
         # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
-        self.LOG.info(f"To {receiver}: {msg}{ats}")
-        self.wcf.send_text(f"{msg}{ats}", receiver, at_list)
+        if ats == "":
+            self.LOG.info(f"To {receiver}: {msg}")
+            self.wcf.send_text(f"{msg}", receiver, at_list)
+        else:
+            self.LOG.info(f"To {receiver}: {ats}\r{msg}")
+            self.wcf.send_text(f"{ats}\n\n{msg}", receiver, at_list)
 
     def getAllContacts(self) -> dict:
         """
@@ -150,7 +161,7 @@ class Robot(Job):
         格式: {"wxid": "NickName"}
         """
         contacts = self.wcf.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
-        return {contact["UserName"]: contact["NickName"]for contact in contacts}
+        return {contact["UserName"]: contact["NickName"] for contact in contacts}
 
     def keepRunningAndBlockProcess(self) -> None:
         """
