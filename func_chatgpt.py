@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-import datetime
+from datetime import datetime
 
 import openai
 
@@ -42,12 +42,12 @@ class ChatGPT():
         except Exception as e0:
             rsp = "发生未知错误：" + str(e0)
 
-        print(self.conversation_list[wxid])
+        # print(self.conversation_list[wxid])
 
         return rsp
 
     def updateMessage(self, wxid: str, question: str, role: str) -> None:
-        now_time = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        now_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
         time_mk = "当需要回答时间时请直接参考回复:"
         # 初始化聊天记录,组装系统信息
@@ -77,15 +77,14 @@ class ChatGPT():
 
 
 if __name__ == "__main__":
-
     chat = ChatGPT("your key", "https://api.openai.com/v1")
     while True:
         q = input(">>> ")
         try:
-            time_start = datetime.time()  # 记录开始时间
+            time_start = datetime.now()  # 记录开始时间
             print(chat.get_answer(q, "wxid"))
-            time_end = datetime.time()  # 记录结束时间
+            time_end = datetime.now()  # 记录结束时间
 
-            print(f"{round(time_end - time_start, 2)}s")  # 计算的时间差为程序的执行时间，单位为秒/s
+            print(f"{round((time_end - time_start).total_seconds(), 2)}s")  # 计算的时间差为程序的执行时间，单位为秒/s
         except Exception as e:
             print(e)
