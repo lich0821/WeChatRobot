@@ -23,7 +23,10 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-        self.chat = ChatGPT(self.config.CHAT_KEY, self.config.CHAT_API)
+        self.chat = None
+        chatgpt = self.config.CHATGPT
+        if chatgpt:
+            self.chat = ChatGPT(chatgpt.get("key"), chatgpt.get("api"), chatgpt.get("proxy"))
 
     def toAt(self, msg: Wcf.WxMsg) -> bool:
         """
@@ -63,8 +66,11 @@ class Robot(Job):
     def toChitchat(self, msg: Wcf.WxMsg) -> bool:
         """闲聊，接入 ChatGPT
         """
+        if not self.chat:
+            return False
+
         q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
-        rsp = self.chat.get_answer(q,(msg.roomid if msg.from_group() else msg.sender))
+        rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
         if rsp:
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)

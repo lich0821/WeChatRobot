@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
-import yaml
 import logging.config
+import os
+import shutil
+
+import yaml
 
 
 class Config(object):
@@ -16,10 +18,9 @@ class Config(object):
             with open(f"{pwd}/config.yaml", "rb") as fp:
                 yconfig = yaml.safe_load(fp)
         except FileNotFoundError:
-            with open(f"{pwd}/config.yaml.template", "rb") as fp:
+            shutil.copyfile(f"{pwd}/config.yaml.template", f"{pwd}/config.yaml")
+            with open(f"{pwd}/config.yaml", "rb") as fp:
                 yconfig = yaml.safe_load(fp)
-                with open(f"{pwd}/config.yaml", "w+") as yf:
-                    yaml.dump(yconfig, yf, default_flow_style=False)
 
         return yconfig
 
@@ -27,5 +28,4 @@ class Config(object):
         yconfig = self._load_config()
         logging.config.dictConfig(yconfig["logging"])
         self.GROUPS = yconfig["groups"]["enable"]
-        self.CHAT_KEY = yconfig["chatgpt"]["key"]
-        self.CHAT_API = yconfig["chatgpt"]["api"]
+        self.CHATGPT = yconfig.get("chatgpt")

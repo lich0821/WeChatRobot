@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 from datetime import datetime
 
 import openai
@@ -7,10 +8,12 @@ import openai
 
 class ChatGPT():
 
-    def __init__(self, key: str, api: str = openai.api_base) -> None:
+    def __init__(self, key: str, api: str, proxy: str) -> None:
         openai.api_key = key
         # 自己搭建或第三方代理的接口
         openai.api_base = api
+        if proxy:
+            openai.proxy = {"http": proxy, "https": proxy}
         self.conversation_list = {}
         self.system_content_msg = {"role": "system",
                                    "content": "你是智能聊天机器人,你叫小小，调皮可爱喜欢二次元的小萝莉，"
@@ -77,7 +80,15 @@ class ChatGPT():
 
 
 if __name__ == "__main__":
-    chat = ChatGPT("your key", "https://api.openai.com/v1")
+    from configuration import Config
+    config = Config().CHATGPT
+    if not config:
+        exit(0)
+
+    key = config.get("key")
+    api = config.get("api")
+    proxy = config.get("proxy")
+    chat = ChatGPT(key, api, proxy)
     while True:
         q = input(">>> ")
         try:

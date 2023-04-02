@@ -39,8 +39,10 @@ logging:
     handlers: [console, info_file_handler, error_file_handler]
 
 groups:
-  enable: [] # 允许响应的群 roomId，可以通过 WxGetContacts 获取
+  enable: [] # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom
 
-chatgpt:
-  key: your key
-  api: https://api.openai.com/v1
+# 如果要使用 ChatGPT，取消下面的注释并填写相关内容
+# chatgpt:
+#   key: 填写你 ChatGPT 的 key
+#   api: https://api.openai.com/v1 # 如果你不知道这是干嘛的，就不要改
+#   proxy: # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
