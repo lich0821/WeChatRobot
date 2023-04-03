@@ -37,6 +37,13 @@ def main():
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
+    # 暴露 HTTP 接口供发送消息，需要在配置文件中取消 http 注释
+    # 接口文档：http://localhost:9999/docs
+    # 访问示例：
+    # 1. 浏览器访问：http://localhost:9999/send?msg=hello%20world&receiver=filehelper
+    # 2. curl -X 'GET' 'http://localhost:9999/send?msg=hello%20world&receiver=filehelper' -H 'accept: application/json'
+    robot.enableHTTP()
+
     # 接收消息
     robot.enableRecvMsg()
 

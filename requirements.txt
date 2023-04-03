@@ -1,5 +1,7 @@
+fastapi
 openai
 pandas
 pyyaml
 schedule
+uvicorn[standard]
 wcferry
