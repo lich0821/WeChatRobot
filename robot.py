@@ -5,7 +5,6 @@ import re
 import time
 import xml.etree.ElementTree as ET
 
-import uvicorn
 from wcferry import Wcf
 
 from configuration import Config
@@ -19,9 +18,9 @@ class Robot(Job):
     """个性化自己的机器人
     """
 
-    def __init__(self, wcf: Wcf) -> None:
+    def __init__(self, config: Config, wcf: Wcf) -> None:
         self.wcf = wcf
-        self.config = Config()
+        self.config = config
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()

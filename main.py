@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import signal
+
 from wcferry import Wcf
 
+from configuration import Config
 from robot import Robot
 
 
@@ -23,6 +25,7 @@ def weather_report(robot: Robot) -> None:
 
 
 def main():
+    config = Config()
     wcf = Wcf(debug=True)
 
     def handler(sig, frame):
@@ -31,7 +34,7 @@ def main():
 
     signal.signal(signal.SIGINT, handler)
 
-    robot = Robot(wcf)
+    robot = Robot(config, wcf)
     robot.LOG.info("正在启动机器人···")
 
     # 机器人启动发送测试消息
