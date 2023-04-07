@@ -145,7 +145,7 @@ class Robot(Job):
             wxids = at_list.split(",")
             for wxid in wxids:
                 # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
-                ats = f" @{self.allContacts.get(wxid, '')}"
+                ats += f" @{self.allContacts.get(wxid, '')}"
 
         # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
         if ats == "":
