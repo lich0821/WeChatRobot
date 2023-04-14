@@ -199,3 +199,4 @@ class Robot(Job):
                     title="API for send text",
                     description=f"Github: <a href='{home}'>WeChatFerry</a>",)
         Http.start(http, c["host"], c["port"])
+        self.LOG.info(f"HTTP listening on http://{c['host']}:{c['port']}")
