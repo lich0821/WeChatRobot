@@ -30,3 +30,4 @@ class Config(object):
         self.GROUPS = yconfig["groups"]["enable"]
         self.CHATGPT = yconfig.get("chatgpt")
         self.HTTP = yconfig.get("http")
+        self.NEWS = yconfig["news"]["receivers"]

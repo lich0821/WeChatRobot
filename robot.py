@@ -11,6 +11,7 @@ from configuration import Config
 from func_chatgpt import ChatGPT
 from func_chengyu import cy
 from func_http import Http
+from func_news import News
 from job_mgmt import Job
 
 
@@ -200,3 +201,12 @@ class Robot(Job):
                     description=f"Github: <a href='{home}'>WeChatFerry</a>",)
         Http.start(http, c["host"], c["port"])
         self.LOG.info(f"HTTP listening on http://{c['host']}:{c['port']}")
+
+    def newsReport(self) -> None:
+        receivers = self.config.NEWS
+        if not receivers:
+            return
+
+        news = News().get_important_news()
+        for r in receivers:
+            self.sendTextMsg(news, r)
