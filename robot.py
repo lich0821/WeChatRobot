@@ -31,8 +31,7 @@ class Robot(Job):
             self.chat = ChatGPT(chatgpt.get("key"), chatgpt.get("api"), chatgpt.get("proxy"))
 
     def toAt(self, msg: Wcf.WxMsg) -> bool:
-        """
-        处理被 @ 消息，现在只固定回复: "你@我干嘛？"
+        """处理被 @ 消息
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
@@ -68,11 +67,12 @@ class Robot(Job):
     def toChitchat(self, msg: Wcf.WxMsg) -> bool:
         """闲聊，接入 ChatGPT
         """
-        if not self.chat:
-            return False
+        if not self.chat:  # 没接 ChatGPT，固定回复
+            rsp = "你@我干嘛？"
+        else:  # 接了 ChatGPT，智能回复
+            q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+            rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
 
-        q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
-        rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
         if rsp:
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
@@ -81,7 +81,7 @@ class Robot(Job):
 
             return True
         else:
-            self.LOG.error(f"无法从ChatGPT获得答案")
+            self.LOG.error(f"无法从 ChatGPT 获得答案")
             return False
 
     def processMsg(self, msg: Wcf.WxMsg) -> None:
