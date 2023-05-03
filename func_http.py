@@ -18,9 +18,15 @@ class Http(FastAPI):
         self.wcf = wcf
         self.LOG = logging.getLogger(__name__)
         self.add_api_route("/send", self.send_text_deprecated, methods=["GET"], summary="【已过时，不要再使用】发送消息")
-        self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送消息")
+        self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
 
     def send_text(self, msg: str = Body(...), receiver: str = Body(...), aters: str = Body("")) -> dict:
+        """ 发送消息
+        :param msg: 消息字符串
+        :param receiver: 接收人wxid或者群id
+        :param at_list: 要@的wxid, @所有人的wxid为：nofity@all
+        参考：robot.py 里 sendTextMsg
+        """
         ret = self.wcf.send_text(msg, receiver, aters)
         return {"status": ret}
 
