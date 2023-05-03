@@ -6,6 +6,7 @@ from typing import Any
 import uvicorn
 import threading
 from fastapi import FastAPI
+from fastapi import Body
 from wcferry import Wcf
 
 
@@ -16,9 +17,14 @@ class Http(FastAPI):
         super().__init__(**extra)
         self.wcf = wcf
         self.LOG = logging.getLogger(__name__)
-        self.add_api_route("/send", self.send_text, methods=["GET"])
+        self.add_api_route("/send", self.send_text_deprecated, methods=["GET"], summary="【已过时，不要再使用】发送消息")
+        self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送消息")
 
-    def send_text(self, msg: str, receiver: str, aters: str = "") -> dict:
+    def send_text(self, msg: str = Body(...), receiver: str = Body(...), aters: str = Body("")) -> dict:
+        ret = self.wcf.send_text(msg, receiver, aters)
+        return {"status": ret}
+
+    def send_text_deprecated(self, msg: str, receiver: str, aters: str = "") -> dict:
         ret = self.wcf.send_text(msg, receiver, aters)
 
         return {"status": ret, "msg": msg, "receiver": receiver, "aters": aters}
