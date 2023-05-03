@@ -17,17 +17,20 @@ class Http(FastAPI):
         super().__init__(**extra)
         self.wcf = wcf
         self.LOG = logging.getLogger(__name__)
-        self.add_api_route("/send", self.send_text_deprecated, methods=["GET"], summary="【已过时，不要再使用】发送消息")
         self.add_api_route("/text", self.send_text, methods=["POST"], summary="发送文本消息")
+        self.add_api_route("/image", self.send_image, methods=["POST"], summary="发送图片消息")
+        self.add_api_route("/send", self.send_text_deprecated, methods=["GET"], summary="【已过时，不要再使用】发送消息")
 
     def send_text(self, msg: str = Body(...), receiver: str = Body(...), aters: str = Body("")) -> dict:
-        """ 发送消息
-        :param msg: 消息字符串
-        :param receiver: 接收人wxid或者群id
-        :param at_list: 要@的wxid, @所有人的wxid为：nofity@all
-        参考：robot.py 里 sendTextMsg
+        """ 发送消息，可参考：robot.py 里 sendTextMsg
         """
         ret = self.wcf.send_text(msg, receiver, aters)
+        return {"status": ret}
+
+    def send_image(self,
+                   path: str = Body(description="本地图片路径，不支持网络路径"),
+                   receiver: str = Body(description="roomid 或者 wxid")) -> dict:
+        ret = self.wcf.send_image(path, receiver)
         return {"status": ret}
 
     def send_text_deprecated(self, msg: str, receiver: str, aters: str = "") -> dict:
