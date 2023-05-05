@@ -1,8 +1,8 @@
 # WeChatRobot
 一个基于 [WeChatFerry](https://github.com/lich0821/WeChatFerry) 的微信机器人示例。
 
-📖 [文档](https://wechatferry.readthedocs.io/)
-👉 [视频教程](https://mp.weixin.qq.com/s/omuSBeZRKSjo0PEtjwey7A)
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/omuSBeZRKSjo0PEtjwey7A)|
+|:-:|:-:|
 
 ![Demo](demo.gif)
 
@@ -51,6 +51,6 @@ http:
   port: 9999
 ```
 
-欢迎加群交流，后台回复 **`WeChatFerry`**（*注意大小写*）：
+欢迎加群交流，后台回复 `WeChatFerry`：
 
 ![碲矿](TEQuant.jpeg)
