@@ -29,7 +29,7 @@ class Http(FastAPI):
         return {"status": ret}
 
     def send_image(self,
-                   path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="本地图片路径，不支持网络路径"),
+                   path: str = Body("C:\\Projs\\WeChatRobot\\TEQuant.jpeg", description="图片路径"),
                    receiver: str = Body("filehelper", description="roomid 或者 wxid")) -> dict:
         ret = self.wcf.send_image(path, receiver)
         return {"status": ret}
