@@ -5,7 +5,7 @@ import re
 import time
 import xml.etree.ElementTree as ET
 
-from wcferry import Wcf
+from wcferry import Wcf, WxMsg
 
 from configuration import Config
 from func_chatgpt import ChatGPT
@@ -30,14 +30,14 @@ class Robot(Job):
         if chatgpt:
             self.chat = ChatGPT(chatgpt.get("key"), chatgpt.get("api"), chatgpt.get("proxy"))
 
-    def toAt(self, msg: Wcf.WxMsg) -> bool:
+    def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
         return self.toChitchat(msg)
 
-    def toChengyu(self, msg: Wcf.WxMsg) -> bool:
+    def toChengyu(self, msg: WxMsg) -> bool:
         """
         处理成语查询/接龙消息
         :param msg: 微信消息结构
@@ -64,7 +64,7 @@ class Robot(Job):
 
         return status
 
-    def toChitchat(self, msg: Wcf.WxMsg) -> bool:
+    def toChitchat(self, msg: WxMsg) -> bool:
         """闲聊，接入 ChatGPT
         """
         if not self.chat:  # 没接 ChatGPT，固定回复
@@ -84,7 +84,7 @@ class Robot(Job):
             self.LOG.error(f"无法从 ChatGPT 获得答案")
             return False
 
-    def processMsg(self, msg: Wcf.WxMsg) -> None:
+    def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
         此处可进行自定义发送的内容,如通过 msg.content 关键字自动获取当前天气信息，并发送到对应的群组@发送者
         群号：msg.roomid  微信ID：msg.sender  消息内容：msg.content
@@ -116,13 +116,14 @@ class Robot(Job):
 
         elif msg.type == 0x01:   # 文本消息
             # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
-            if msg.from_self() and msg.content == "^更新$":
-                self.config.reload()
-                self.LOG.info("已更新")
+            if msg.from_self():
+                if msg.content == "^更新$":
+                    self.config.reload()
+                    self.LOG.info("已更新")
             else:
                 self.toChitchat(msg)  # 闲聊
 
-    def onMsg(self, msg: Wcf.WxMsg) -> int:
+    def onMsg(self, msg: WxMsg) -> int:
         try:
             self.LOG.info(msg)  # 打印信息
             self.processMsg(msg)
@@ -172,7 +173,7 @@ class Robot(Job):
             self.runPendingJobs()
             time.sleep(1)
 
-    def autoAcceptFriendRequest(self, msg: Wcf.WxMsg) -> None:
+    def autoAcceptFriendRequest(self, msg: WxMsg) -> None:
         try:
             xml = ET.fromstring(msg.content)
             v3 = xml.attrib["encryptusername"]
@@ -182,7 +183,7 @@ class Robot(Job):
         except Exception as e:
             self.LOG.error(f"同意好友出错：{e}")
 
-    def sayHiToNewFriend(self, msg: Wcf.WxMsg) -> None:
+    def sayHiToNewFriend(self, msg: WxMsg) -> None:
         nickName = re.findall(r"你已添加了(.*)，现在可以开始聊天了。", msg.content)
         if nickName:
             # 添加了好友，更新好友列表
