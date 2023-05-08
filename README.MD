@@ -51,6 +51,6 @@ http:
   port: 9999
 ```
 
-欢迎加群交流，后台回复 `WeChatFerry`：
-
-![碲矿](TEQuant.jpeg)
+|![碲矿](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/TEQuant.jpg)|![赞赏](https://raw.githubusercontent.com/lich0821/WeChatFerry/master/QR.jpeg)|
+|:-:|:-:|
+|后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
