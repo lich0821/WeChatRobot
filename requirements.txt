@@ -5,4 +5,4 @@ pandas
 pyyaml
 schedule
 uvicorn[standard]
-wcferry==37.1.25.0
+wcferry==37.1.25.2
