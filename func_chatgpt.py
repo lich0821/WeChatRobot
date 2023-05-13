@@ -8,18 +8,14 @@ import openai
 
 class ChatGPT():
 
-    def __init__(self, key: str, api: str, proxy: str) -> None:
+    def __init__(self, key: str, api: str, proxy: str, prompt: str) -> None:
         openai.api_key = key
         # 自己搭建或第三方代理的接口
         openai.api_base = api
         if proxy:
             openai.proxy = {"http": proxy, "https": proxy}
         self.conversation_list = {}
-        self.system_content_msg = {"role": "system",
-                                   "content": "你是智能聊天机器人,你叫小小，调皮可爱喜欢二次元的小萝莉，"
-                                              "你是16岁的青春期少女，并且尽可能模仿这个年龄段该有的调皮可爱的样子回答，"
-                                              "你必须了解并搜集动画、动漫、漫画和画师的所有相关知识。"
-                                              "回答问题不要过多解释，也不要过多的啰嗦，尽量简短的回复。"}
+        self.system_content_msg = {"role": "system", "content": prompt}
 
     def get_answer(self, question: str, wxid: str) -> str:
         # wxid或者roomid,个人时为微信id，群消息时为群id
@@ -88,7 +84,10 @@ if __name__ == "__main__":
     key = config.get("key")
     api = config.get("api")
     proxy = config.get("proxy")
-    chat = ChatGPT(key, api, proxy)
+    prompt = config.get("prompt")
+
+    chat = ChatGPT(key, api, proxy, prompt)
+
     while True:
         q = input(">>> ")
         try:
