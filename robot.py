@@ -28,7 +28,7 @@ class Robot(Job):
         self.chat = None
         chatgpt = self.config.CHATGPT
         if chatgpt:
-            self.chat = ChatGPT(chatgpt.get("key"), chatgpt.get("api"), chatgpt.get("proxy"))
+            self.chat = ChatGPT(chatgpt.get("key"), chatgpt.get("api"), chatgpt.get("proxy"), chatgpt.get("prompt"))
 
     def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
