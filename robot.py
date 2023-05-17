@@ -177,7 +177,7 @@ class Robot(Job):
             xml = ET.fromstring(msg.content)
             v3 = xml.attrib["encryptusername"]
             v4 = xml.attrib["ticket"]
-            scene = xml.attrib["scene"]
+            scene = int(xml.attrib["scene"])
             self.wcf.accept_new_friend(v3, v4, scene)
 
         except Exception as e:
