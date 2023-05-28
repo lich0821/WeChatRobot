@@ -51,6 +51,7 @@ chatgpt:
   key: 填写你 ChatGPT 的 key
   api: https://api.openai.com/v1 # 如果你不知道这是干嘛的，就不要改
   proxy: # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
+  prompt: 你是智能聊天机器人，你叫wcferry # 根据需要对角色进行设定
 ```
 
 * ~~为了暴露 HTTP 接口，需要取消配置中 http 的注释：~~ 如有需要，推荐使用 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
