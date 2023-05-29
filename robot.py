@@ -10,7 +10,6 @@ from wcferry import Wcf, WxMsg
 from configuration import Config
 from func_chatgpt import ChatGPT
 from func_chengyu import cy
-from func_http import Http
 from func_news import News
 from job_mgmt import Job
 
@@ -190,19 +189,6 @@ class Robot(Job):
             # 添加了好友，更新好友列表
             self.allContacts[msg.sender] = nickName[0]
             self.sendTextMsg(f"Hi {nickName[0]}，我自动通过了你的好友请求。", msg.sender)
-
-    def enableHTTP(self) -> None:
-        """暴露 HTTP 发送消息接口供外部调用，不配置则忽略"""
-        c = self.config.HTTP
-        if not c:
-            return
-
-        home = "https://github.com/lich0821/WeChatFerry"
-        http = Http(wcf=self.wcf,
-                    title="API for send text",
-                    description=f"Github: <a href='{home}'>WeChatFerry</a>",)
-        Http.start(http, c["host"], c["port"])
-        self.LOG.info(f"HTTP listening on http://{c['host']}:{c['port']}")
 
     def newsReport(self) -> None:
         receivers = self.config.NEWS
