@@ -39,7 +39,7 @@ class News(object):
 
         fmt_time = time.strftime("%Y年%m月%d日", ts)
 
-        news = re.sub(r"([\u2460-\u2473])", r"\n\1", news)
+        news = re.sub(r"(\d{1,2}、)", r"\n\1", news)
         fmt_news = "".join(etree.HTML(news).xpath(" // text()"))
         fmt_news = re.sub(r"周[一|二|三|四|五|六|日]你需要知道的", r"", fmt_news)
 
