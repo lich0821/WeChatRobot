@@ -50,8 +50,3 @@ news:
 #   api: https://api.openai.com/v1 # 如果你不知道这是干嘛的，就不要改
 #   proxy: # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
 #   prompt: 你是智能聊天机器人，你叫wcferry # 根据需要对角色进行设定
-
-# 如果需要暴露 HTTP 接口，取消下面的注释
-# http:
-#   host: 0.0.0.0
-#   port: 9999
