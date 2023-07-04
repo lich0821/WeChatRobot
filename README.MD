@@ -54,7 +54,9 @@ chatgpt:
   prompt: 你是智能聊天机器人，你叫wcferry # 根据需要对角色进行设定
 ```
 
-* ~~为了暴露 HTTP 接口，需要取消配置中 http 的注释：~~ 如有需要，推荐使用 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
+* ~~为了暴露 HTTP 接口，需要取消配置中 http 的注释：~~
+
+如有需要，推荐使用 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
 
 [![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp) [![Downloads](https://static.pepy.tech/badge/wcfhttp)](https://pypi.python.org/pypi/wcfhttp) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
 
