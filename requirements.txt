@@ -1,8 +1,7 @@
-fastapi
 lxml
 openai
 pandas
 pyyaml
+requests
 schedule
-uvicorn[standard]
-wcferry==37.1.25.3
+wcferry===37.1.25.3
