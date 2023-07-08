@@ -15,16 +15,18 @@ class TigerBot():
         self.tbmodel = tbconf["model"]
         self.fallback = ["滚", "快滚", "赶紧滚"]
 
-    def answer(self, msg: str, sender: str = None) -> str:
+    def get_answer(self, msg: str, sender: str = None) -> str:
         payload = {
             "text": msg,
             "modelVersion": self.tbmodel
         }
+        rsp = ""
         try:
-            rsp = requests.post(self.tburl, headers=self.tbheaders, json=payload).json()["data"]["result"][0]
+            rsp = requests.post(self.tburl, headers=self.tbheaders, json=payload).json()
+            rsp = rsp["data"]["result"][0]
         except Exception as e:
-            self.LOG.error(f"{e}")
-            idx = randint(0, len(self.fallback))
+            self.LOG.error(f"{e}: {payload}\n{rsp}")
+            idx = randint(0, len(self.fallback) - 1)
             rsp = self.fallback[idx]
 
         return rsp
@@ -34,5 +36,5 @@ if __name__ == "__main__":
     from configuration import Config
     c = Config()
     tbot = TigerBot(c.TIGERBOT)
-    rsp = tbot.answer("你还活着？")
+    rsp = tbot.get_answer("你还活着？")
     print(rsp)

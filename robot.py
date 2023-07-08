@@ -11,6 +11,7 @@ from configuration import Config
 from func_chatgpt import ChatGPT
 from func_chengyu import cy
 from func_news import News
+from func_tigerbot import TigerBot
 from job_mgmt import Job
 
 
@@ -24,10 +25,14 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-        self.chat = None
-        chatgpt = self.config.CHATGPT
-        if chatgpt:
-            self.chat = ChatGPT(chatgpt.get("key"), chatgpt.get("api"), chatgpt.get("proxy"), chatgpt.get("prompt"))
+
+        if self.config.TIGERBOT:
+            self.chat = TigerBot(self.config.TIGERBOT)
+        elif self.config.CHATGPT:
+            cgpt = self.config.CHATGPT
+            self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
+        else:
+            self.chat = None
 
     def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
