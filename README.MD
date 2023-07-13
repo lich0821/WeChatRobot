@@ -1,14 +1,14 @@
 # WeChatRobot
 一个基于 [WeChatFerry](https://github.com/lich0821/WeChatFerry) 的微信机器人示例。
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/XTJ9H-FsCPCscixAts8i_A)|
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/vAGpn1C9stI8Xzt1hUJhLA)|
 |:-:|:-:|:-:|
 
 ![Demo](demo.gif)
 
 ## Quick Start
 0. 安装 Python，例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
-1. 安装微信 `3.7.0.30`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/download/v3.7.0.30.21/WeChatSetup-3.7.0.30.exe)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
+1. 安装微信 `3.9.2.23`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/download/v39.0.0/WeChatSetup-3.9.2.23.exe)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
 2. 克隆项目
 ```sh
 git clone https://github.com/lich0821/WeChatRobot.git
