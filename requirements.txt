@@ -4,4 +4,4 @@ pandas
 pyyaml
 requests
 schedule
-wcferry>=39.0.0.0
+wcferry>=39.0.0.1
