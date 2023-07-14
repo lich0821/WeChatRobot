@@ -4,6 +4,8 @@ import logging
 import re
 import time
 import xml.etree.ElementTree as ET
+from queue import Empty
+from threading import Thread
 
 from wcferry import Wcf, WxMsg
 
@@ -138,6 +140,21 @@ class Robot(Job):
 
     def enableRecvMsg(self) -> None:
         self.wcf.enable_recv_msg(self.onMsg)
+
+    def enableReceivingMsg(self) -> None:
+        def innerProcessMsg(wcf: Wcf):
+            while wcf.is_receiving_msg():
+                try:
+                    msg = wcf.get_msg()
+                    self.LOG.info(msg)
+                    self.processMsg(msg)
+                except Empty:
+                    continue  # Empty message
+                except Exception as e:
+                    self.LOG.error(f"Receiving message error: {e}")
+
+        self.wcf.enable_receiving_msg()
+        Thread(target=innerProcessMsg, name="GetMessage", args=(self.wcf,), daemon=True).start()
 
     def sendTextMsg(self, msg: str, receiver: str, at_list: str = "") -> None:
         """ 发送消息
