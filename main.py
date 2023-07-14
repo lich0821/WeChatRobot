@@ -41,7 +41,8 @@ def main():
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
     # 接收消息
-    robot.enableRecvMsg()
+    # robot.enableRecvMsg()     # 可能会丢消息？
+    robot.enableReceivingMsg()  # 加队列
 
     # 每天 7 点发送天气预报
     robot.onEveryTime("07:00", weather_report, robot=robot)
