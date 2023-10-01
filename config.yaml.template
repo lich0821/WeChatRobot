@@ -44,6 +44,9 @@ groups:
 news:
   receivers: [] # 定时新闻接收人（roomid 或者 wxid）
 
+report_reminder:
+  receivers: [] # 定时日报周报月报提醒（roomid 或者 wxid）
+
 # 如果要使用 ChatGPT，取消下面的注释并填写相关内容
 # chatgpt:
 #   key: 填写你 ChatGPT 的 key

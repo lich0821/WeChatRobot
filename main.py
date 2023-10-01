@@ -6,6 +6,7 @@ import signal
 from wcferry import Wcf
 
 from configuration import Config
+from report_reminder import ReportReminder
 from robot import Robot
 
 
@@ -23,7 +24,6 @@ def weather_report(robot: Robot) -> None:
         robot.sendTextMsg(report, r)
         # robot.sendTextMsg(report, r, "nofity@all")   # 发送消息并@所有人
 
-
 def main():
     config = Config()
     wcf = Wcf(debug=True)
@@ -38,7 +38,9 @@ def main():
     robot.LOG.info("正在启动机器人···")
 
     # 机器人启动发送测试消息
-    robot.sendTextMsg("机器人启动成功！", "filehelper")
+    # robot.sendTextMsg("机器人启动成功！", "filehelper")
+    # 打印全部微信联系人
+    print(robot.getAllContacts())
 
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？
@@ -48,7 +50,9 @@ def main():
     robot.onEveryTime("07:00", weather_report, robot=robot)
 
     # 每天 7:30 发送新闻
-    robot.onEveryTime("07:30", robot.newsReport)
+    #robot.onEveryTime("07:30", robot.newsReport)
+
+    robot.onEveryTime("21:42", ReportReminder.remind, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()

@@ -5,3 +5,4 @@ pyyaml
 requests
 schedule
 wcferry>=39.0.0.1
+chinese_calendar
