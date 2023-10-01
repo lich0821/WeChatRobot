@@ -38,9 +38,7 @@ def main():
     robot.LOG.info("正在启动机器人···")
 
     # 机器人启动发送测试消息
-    # robot.sendTextMsg("机器人启动成功！", "filehelper")
-    # 打印全部微信联系人
-    print(robot.getAllContacts())
+    robot.sendTextMsg("机器人启动成功！", "filehelper")
 
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？
@@ -50,9 +48,10 @@ def main():
     robot.onEveryTime("07:00", weather_report, robot=robot)
 
     # 每天 7:30 发送新闻
-    #robot.onEveryTime("07:30", robot.newsReport)
+    robot.onEveryTime("07:30", robot.newsReport)
 
-    robot.onEveryTime("21:42", ReportReminder.remind, robot=robot)
+    # 每天 4:30 提醒发日报周报月报
+    robot.onEveryTime("4:30", ReportReminder.remind, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
