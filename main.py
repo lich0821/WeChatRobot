@@ -6,6 +6,7 @@ import signal
 from wcferry import Wcf
 
 from configuration import Config
+from func_report_reminder import ReportReminder
 from robot import Robot
 
 
@@ -49,6 +50,9 @@ def main():
 
     # 每天 7:30 发送新闻
     robot.onEveryTime("07:30", robot.newsReport)
+
+    # 每天 16:30 提醒发日报周报月报
+    robot.onEveryTime("16:30", ReportReminder.remind, robot=robot)
 
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
