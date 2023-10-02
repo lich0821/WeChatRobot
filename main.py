@@ -6,7 +6,7 @@ import signal
 from wcferry import Wcf
 
 from configuration import Config
-from report_reminder import ReportReminder
+from func_report_reminder import ReportReminder
 from robot import Robot
 
 
@@ -23,6 +23,7 @@ def weather_report(robot: Robot) -> None:
     for r in receivers:
         robot.sendTextMsg(report, r)
         # robot.sendTextMsg(report, r, "nofity@all")   # 发送消息并@所有人
+
 
 def main():
     config = Config()
