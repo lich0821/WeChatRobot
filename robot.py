@@ -165,12 +165,15 @@ class Robot(Job):
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:
-            wxids = at_list.split(",")
-            for wxid in wxids:
-                # 这里偷个懒，直接 @昵称。有必要的话可以通过 MicroMsg.db 里的 ChatRoom 表，解析群昵称
-                ats += f" @{self.allContacts.get(wxid, '')}"
+            if at_list == "nofity@all":  # @所有人
+                ats = " @所有人"
+            else:
+                wxids = at_list.split(",")
+                for wxid in wxids:
+                    # 根据 wxid 查找群昵称
+                    ats += f" @{self.wcf.get_alias_in_chatroom(wxid, receiver)}"
 
-        # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三，微信规定需这样写，否则@不生效
+        # {msg}{ats} 表示要发送的消息内容后面紧跟@，例如 北京天气情况为：xxx @张三
         if ats == "":
             self.LOG.info(f"To {receiver}: {msg}")
             self.wcf.send_text(f"{msg}", receiver, at_list)
