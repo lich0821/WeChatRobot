@@ -14,6 +14,7 @@ from func_chatgpt import ChatGPT
 from func_chengyu import cy
 from func_news import News
 from func_tigerbot import TigerBot
+from func_xinghuo_web import XinghuoWeb
 from job_mgmt import Job
 
 
@@ -33,6 +34,8 @@ class Robot(Job):
         elif self.config.CHATGPT:
             cgpt = self.config.CHATGPT
             self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
+        elif self.config.XINGHUO_WEB:
+            self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
         else:
             self.chat = None
 
