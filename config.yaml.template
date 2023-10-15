@@ -58,9 +58,10 @@ tigerbot:
   key: key
   model: tigerbot-7b-sft
 
-# 使用讯飞星火模型api需要抓取以下参数
-# 抓取方式详见：https://github.com/HildaM/sparkdesk-api/tree/main/docs
-xinghuo_web:
-  cookie: cookie
-  fd: fd
-  GtToken: GtToken
+# 使用讯飞星火web模式api需要抓取以下参数
+# 抓取方式详见文档：https://www.bilibili.com/read/cv27066577
+# xinghuo_web:
+#  cookie: cookie
+#  fd: fd
+#  GtToken: GtToken
+#  prompt: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题 # 根据需要对角色进行设定
