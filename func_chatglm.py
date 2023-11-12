@@ -58,7 +58,7 @@ plt.show()
             self.conversation_list[wxid][self.chat_type[wxid]]=self.system_content_msg[self.chat_type[wxid]]
             return '已清除'
         elif '#清除全部会话'==question or '#5'==question:
-            self.conversation_list[wxid]=self.system_content_msg[self.chat_type[wxid]]
+            self.conversation_list[wxid]=self.system_content_msg
             return '已清除'
             
         self.updateMessage(wxid, question, "user")
