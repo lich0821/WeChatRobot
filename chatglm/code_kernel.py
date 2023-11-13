@@ -5,12 +5,14 @@ from pprint import pprint
 import queue
 import re
 from subprocess import PIPE
-
+from typing import Dict, Union, Optional, Tuple
 import jupyter_client
 from PIL import Image
 import time
 
 IPYKERNEL = os.environ.get('IPYKERNEL', 'chatglm3')
+
+
 class CodeKernel(object):
     def __init__(self,
                  kernel_name='kernel',
@@ -28,16 +30,18 @@ class CodeKernel(object):
         self.ipython_path = ipython_path
         self.init_file_path = init_file_path
         self.verbose = verbose
-        
+
         if python_path is None and ipython_path is None:
             env = None
         else:
-            env = {"PATH": self.python_path + ":$PATH", "PYTHONPATH": self.python_path}
+            env = {"PATH": self.python_path + ":$PATH",
+                   "PYTHONPATH": self.python_path}
 
         # Initialize the backend kernel
-        self.kernel_manager = jupyter_client.KernelManager(kernel_name=IPYKERNEL, 
+        self.kernel_manager = jupyter_client.KernelManager(kernel_name=IPYKERNEL,
                                                            connection_file=self.kernel_config_path,
-                                                           exec_files=[self.init_file_path],
+                                                           exec_files=[
+                                                               self.init_file_path],
                                                            env=env)
         if self.kernel_config_path:
             self.kernel_manager.load_connection_file()
@@ -65,14 +69,15 @@ class CodeKernel(object):
             io_msg_content = self.kernel.get_iopub_msg(timeout=40)['content']
             while True:
                 msg_out = io_msg_content
-                ### Poll the message
+                # Poll the message
                 try:
-                    io_msg_content = self.kernel.get_iopub_msg(timeout=40)['content']
+                    io_msg_content = self.kernel.get_iopub_msg(timeout=40)[
+                        'content']
                     if 'execution_state' in io_msg_content and io_msg_content['execution_state'] == 'idle':
                         break
                 except queue.Empty:
                     break
-            
+
             return shell_msg, msg_out
         except Exception as e:
             print(e)
@@ -97,14 +102,14 @@ class CodeKernel(object):
 
         return shell_msg
 
-    def get_error_msg(self, msg, verbose=False) -> str | None:
+    def get_error_msg(self, msg, verbose=False) -> Optional[str]:
         if msg['content']['status'] == 'error':
             try:
                 error_msg = msg['content']['traceback']
-            except:
+            except BaseException:
                 try:
                     error_msg = msg['content']['traceback'][-1].strip()
-                except:
+                except BaseException:
                     error_msg = "Traceback Error"
             if verbose:
                 print("Error: ", error_msg)
@@ -141,16 +146,19 @@ class CodeKernel(object):
 
     def is_alive(self):
         return self.kernel.is_alive()
-    
+
+
 def b64_2_img(data):
     buff = BytesIO(base64.b64decode(data))
     return Image.open(buff)
 
+
 def clean_ansi_codes(input_string):
     ansi_escape = re.compile(r'(\x9B|\x1B\[|\u001b\[)[0-?]*[ -/]*[@-~]')
     return ansi_escape.sub('', input_string)
-    
-def execute(code, kernel: CodeKernel) -> tuple[str, str | Image.Image]:
+
+
+def execute(code, kernel: CodeKernel) -> tuple[str, Union[str, Image.Image]]:
     res = ""
     res_type = None
     code = code.replace("<|observation|>", "")
@@ -159,12 +167,12 @@ def execute(code, kernel: CodeKernel) -> tuple[str, str | Image.Image]:
     code = code.replace("<|user|>", "")
     code = code.replace("<|system|>", "")
     msg, output = kernel.execute(code)
-    
+
     if msg['metadata']['status'] == "timeout":
         return res_type, 'Timed out'
     elif msg['metadata']['status'] == 'error':
         return res_type, clean_ansi_codes('\n'.join(kernel.get_error_msg(msg, verbose=True)))
-    
+
     if 'text' in output:
         res_type = "text"
         res = output['text']
@@ -177,17 +185,16 @@ def execute(code, kernel: CodeKernel) -> tuple[str, str | Image.Image]:
             elif 'text/plain' in key:
                 res_type = "text"
                 res = output['data'][key]
-            
 
     if res_type == "image":
         return res_type, b64_2_img(res)
     elif res_type == "text" or res_type == "traceback":
         res = res
-    
+
     return res_type, res
+
 
 def extract_code(text: str) -> str:
     pattern = r'```([^\n]*)\n(.*?)```'
     matches = re.findall(pattern, text, re.DOTALL)
     return matches[-1][1]
-

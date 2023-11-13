@@ -38,7 +38,7 @@ class Robot(Job):
         elif self.config.XINGHUO_WEB:
             self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
         elif self.config.CHATGLM:
-            self.chat = ChatGLM(wcf, self.config.CHATGLM)
+            self.chat = ChatGLM(self.config.CHATGLM,wcf)
         else:
             self.chat = None
 

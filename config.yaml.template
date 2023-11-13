@@ -54,12 +54,12 @@ report_reminder:
 #   proxy: # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
 #   prompt: 你是智能聊天机器人，你叫wcferry # 根据需要对角色进行设定
 
-chatglm:
-  key: key
-  api: http://localhost:8000/v1 # 根据自己的chatglm地址修改
-  proxy:  # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
-  prompt: 你是智能聊天机器人，你叫小薇 # 根据需要对角色进行设定
-  file_path: F:/Pictures/temp  #设定生成图片和代码使用的文件夹路径
+#chatglm:
+#  key: key #暂时没有
+#  api: http://localhost:8000/v1 # 根据自己的chatglm地址修改
+#  proxy:  # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
+#  prompt: 你是智能聊天机器人，你叫小薇 # 根据需要对角色进行设定
+#  file_path: F:/Pictures/temp  #设定生成图片和代码使用的文件夹路径
 
 tigerbot:
   key: key

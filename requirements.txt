@@ -8,3 +8,7 @@ schedule
 pyhandytools
 sparkdesk-api==1.3.0
 wcferry>=39.0.3.0
+websocket
+pillow
+jupyter_client
+zhdate
