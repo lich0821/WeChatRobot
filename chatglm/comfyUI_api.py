@@ -1,14 +1,15 @@
 # This is an example that uses the websockets api to know when a prompt execution is done
 # Once the prompt execution is done it downloads the images using the /history endpoint
 
+import io
+import json
+import random
+import urllib
+import uuid
+
+import requests
 # NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
 import websocket
-import uuid
-import json
-import requests
-import urllib
-import random
-import io
 from PIL import Image
 
 
@@ -178,7 +179,8 @@ if __name__ == '__main__':
 
     for node_id in images:
         for image_data in images[node_id]:
-            from PIL import Image
             import io
+
+            from PIL import Image
             image = Image.open(io.BytesIO(image_data))
             image.show()

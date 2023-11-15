@@ -12,3 +12,4 @@ websocket
 pillow
 jupyter_client
 zhdate
+ipykernel 

@@ -1,16 +1,17 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-
-import openai
 import json
 import os
 import random
-from chatglm.tool_registry import get_tools, dispatch_tool, extract_code
-from chatglm.code_kernel import execute, CodeKernel
-from typing import Dict, Union, Optional, Tuple
+from datetime import datetime
+from typing import Dict, Optional, Tuple, Union
+
+import openai
 from wcferry import Wcf
+
+from chatglm.code_kernel import CodeKernel, execute
+from chatglm.tool_registry import dispatch_tool, extract_code, get_tools
 
 functions = get_tools()
 

@@ -1,14 +1,15 @@
 import base64
-from io import BytesIO
 import os
-from pprint import pprint
 import queue
 import re
+import time
+from io import BytesIO
+from pprint import pprint
 from subprocess import PIPE
-from typing import Dict, Union, Optional, Tuple
+from typing import Dict, Optional, Tuple, Union
+
 import jupyter_client
 from PIL import Image
-import time
 
 IPYKERNEL = os.environ.get('IPYKERNEL', 'chatglm3')
 
