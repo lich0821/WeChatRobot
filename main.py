@@ -59,8 +59,8 @@ def main(chat_type: int):
     robot.keepRunningAndBlockProcess()
 
 
-parser = ArgumentParser()
-parser.add_argument('-c', type=int, default=0, help='选择模型参数: 1, 2, 3, 4')
 if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument('-c', type=int, default=0, help='选择模型参数: 1, 2, 3, 4')
     args = parser.parse_args().c
     main(args)
