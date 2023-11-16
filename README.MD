@@ -31,13 +31,25 @@ pip install -r requirements.txt
 
 4. 运行
 
-直接运行程序会自动拉起微信,如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。  
-C默认为0可选: 1.TigerBot 2.ChatGPT 3.讯飞星火。前提是需要阅读并配置config.yaml。
+我们需要运行两次main.py第一次是生成配置文件config.yaml, 第二次是真正跑你的机器人。  
+直接运行程序会自动拉起微信,如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。
+
+下面代码为第一次运行: 第一次运行main.py会在WeChatRobot目录下生成一个config.yaml文件，参照修改配置进行修改。
+其中chatgpt、tigerbot和xinghuo_web是三种模型的配置信息, 你需要配置它们的参数, 不知道的可以加群交流。
 ```sh
-# 选择chatgpt
-python main.py -c 2
+python main.py
 ```
 
+
+下面代码为第二次运行: 你可以通过命令行参数选择模型，默认是不选择。正因如此你需要配置前面所说三种模型中的至少一种(当然也可以都配置, 想跑那个模型就选什么参数), 然后就可以开始使用你的机器人了。
+```sh
+# 例: 我想运行选择chatgpt的机器人
+python main.py -c 2
+```
+> python main.py -c C 其中参数C可选择如下所示
+>> 1. tigerbot模型
+>> 2. chatgpt模型 
+>> 3. 讯飞星火模型
 ### 修改配置
 配置文件 `config.yaml` 是运行程序后自动从模板复制过来的，以下功能默认关闭。
 
