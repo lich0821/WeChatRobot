@@ -31,10 +31,11 @@ pip install -r requirements.txt
 
 4. 运行
 
-直接运行程序会自动拉起微信：
+直接运行程序会自动拉起微信,如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。  
+C默认为0可选: 1.TigerBot 2.ChatGPT 3.讯飞星火。前提是需要阅读并配置config.yaml。
 ```sh
-python main.py
-# 如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。
+# 选择chatgpt
+python main.py -c 2
 ```
 
 ### 修改配置

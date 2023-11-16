@@ -9,6 +9,7 @@ from threading import Thread
 
 from wcferry import Wcf, WxMsg
 
+from constants import ChatType
 from configuration import Config
 from func_chatgpt import ChatGPT
 from func_chengyu import cy
@@ -22,21 +23,23 @@ class Robot(Job):
     """个性化自己的机器人
     """
 
-    def __init__(self, config: Config, wcf: Wcf) -> None:
+    def __init__(self, config: Config, wcf: Wcf, chat_type: int) -> None:
+        super().__init__()
         self.wcf = wcf
         self.config = config
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
 
-        if self.config.TIGERBOT:
+        if chat_type == ChatType.TIGER_BOT.value and all(value is not None for value in self.config.TIGERBOT.values()):
             self.chat = TigerBot(self.config.TIGERBOT)
-        elif self.config.CHATGPT:
+        elif chat_type == ChatType.CHATGPT.value and all(value is not None for value in self.config.CHATGPT.values()):
             cgpt = self.config.CHATGPT
             self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
-        elif self.config.XINGHUO_WEB:
+        elif chat_type == ChatType.XINGHUO_WEB.value and all(value is not None for value in self.config.XINGHUO_WEB.values()):
             self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
         else:
+            self.LOG.warning('未配置模型')
             self.chat = None
 
     def toAt(self, msg: WxMsg) -> bool:

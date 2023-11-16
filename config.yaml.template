@@ -47,21 +47,31 @@ news:
 report_reminder:
   receivers: [] # 定时日报周报月报提醒（roomid 或者 wxid）
 
-# 如果要使用 ChatGPT，取消下面的注释并填写相关内容
-# chatgpt:
-#   key: 填写你 ChatGPT 的 key
-#   api: https://api.openai.com/v1 # 如果你不知道这是干嘛的，就不要改
-#   proxy: # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
-#   prompt: 你是智能聊天机器人，你叫wcferry # 根据需要对角色进行设定
+# 如果要使用 ChatGPT，取消下面的注释并填写相关内容,参数与说明一一对应
+# 填写你 ChatGPT 的 key
+# https://api.openai.com/v1 如果你不知道这是干嘛的，就不要改
+# 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
+# 是智能聊天机器人，你叫wcferry # 根据需要对角色进行设定
+chatgpt:
+  key:
+  api: https://api.openai.com/v1
+  proxy:
+  prompt:
 
+# 使用 tigerbot
+# key
+# tigerbot-7b-sft
 tigerbot:
-  key: key
+  key:
   model: tigerbot-7b-sft
 
-# 使用讯飞星火web模式api需要抓取以下参数
-# 抓取方式详见文档：https://www.bilibili.com/read/cv27066577
-# xinghuo_web:
-#  cookie: cookie
-#  fd: fd
-#  GtToken: GtToken
-#  prompt: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题 # 根据需要对角色进行设定
+# 使用讯飞星火web模式api需要抓取以下参数, 抓取方式详见文档：https://www.bilibili.com/read/cv27066577
+# cookie
+# fd
+# GtToken
+# 根据需要对角色进行设定: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题
+xinghuo_web:
+  cookie:
+  fd:
+  GtToken:
+  prompt:
