@@ -31,16 +31,28 @@ class Robot(Job):
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
 
-        if chat_type == ChatType.TIGER_BOT.value and all(value is not None for value in self.config.TIGERBOT.values()):
-            self.chat = TigerBot(self.config.TIGERBOT)
-        elif chat_type == ChatType.CHATGPT.value and all(value is not None for value in self.config.CHATGPT.values()):
-            cgpt = self.config.CHATGPT
-            self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
-        elif chat_type == ChatType.XINGHUO_WEB.value and all(value is not None for value in self.config.XINGHUO_WEB.values()):
-            self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
+        if chat_type == ChatType.UnKnown.value:
+            if all(value is not None for value in self.config.TIGERBOT.values()):
+                self.chat = TigerBot(self.config.TIGERBOT)
+            elif all(value is not None for value in self.config.CHATGPT.values()):
+                cgpt = self.config.CHATGPT
+                self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
+            elif all(value is not None for value in self.config.XINGHUO_WEB.values()):
+                self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
+            else:
+                self.LOG.warning('未配置模型')
+                self.chat = None
         else:
-            self.LOG.warning('未配置模型')
-            self.chat = None
+            if chat_type == ChatType.TIGER_BOT.value and all(value is not None for value in self.config.TIGERBOT.values()):
+                self.chat = TigerBot(self.config.TIGERBOT)
+            elif chat_type == ChatType.CHATGPT.value and all(value is not None for value in self.config.CHATGPT.values()):
+                cgpt = self.config.CHATGPT
+                self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
+            elif chat_type == ChatType.XINGHUO_WEB.value and all(value is not None for value in self.config.XINGHUO_WEB.values()):
+                self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
+            else:
+                self.LOG.warning('未配置模型')
+                self.chat = None
 
     def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
