@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import signal
+from argparse import ArgumentParser
 
 from wcferry import Wcf
 
@@ -25,7 +26,7 @@ def weather_report(robot: Robot) -> None:
         # robot.sendTextMsg(report, r, "nofity@all")   # 发送消息并@所有人
 
 
-def main():
+def main(chat_type: int):
     config = Config()
     wcf = Wcf(debug=True)
 
@@ -35,7 +36,7 @@ def main():
 
     signal.signal(signal.SIGINT, handler)
 
-    robot = Robot(config, wcf)
+    robot = Robot(config, wcf, chat_type)
     robot.LOG.info("正在启动机器人···")
 
     # 机器人启动发送测试消息
@@ -59,4 +60,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    parser.add_argument('-c', type=int, default=0, help='选择模型参数: 1, 2, 3, 4')
+    args = parser.parse_args().c
+    main(args)
