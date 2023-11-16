@@ -33,3 +33,4 @@ class Config(object):
         self.REPORT_REMINDERS = yconfig["report_reminder"]["receivers"]
         self.TIGERBOT = yconfig.get("tigerbot")
         self.XINGHUO_WEB = yconfig.get("xinghuo_web")
+        self.CHATGLM = yconfig.get("chatglm")

@@ -11,6 +11,7 @@ from wcferry import Wcf, WxMsg
 
 from configuration import Config
 from func_chatgpt import ChatGPT
+from func_chatglm import ChatGLM
 from func_chengyu import cy
 from func_news import News
 from func_tigerbot import TigerBot
@@ -36,6 +37,8 @@ class Robot(Job):
             self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
         elif self.config.XINGHUO_WEB:
             self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
+        elif self.config.CHATGLM:
+            self.chat = ChatGLM(self.config.CHATGLM,wcf)
         else:
             self.chat = None
 
