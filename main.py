@@ -24,7 +24,7 @@ def weather_report(robot: Robot) -> None:
 
     for r in receivers:
         robot.sendTextMsg(report, r)
-        # robot.sendTextMsg(report, r, "nofity@all")   # 发送消息并@所有人
+        # robot.sendTextMsg(report, r, "notify@all")   # 发送消息并@所有人
 
 
 def main(chat_type: int):

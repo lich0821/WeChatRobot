@@ -186,12 +186,12 @@ class Robot(Job):
         """ 发送消息
         :param msg: 消息字符串
         :param receiver: 接收人wxid或者群id
-        :param at_list: 要@的wxid, @所有人的wxid为：nofity@all
+        :param at_list: 要@的wxid, @所有人的wxid为：notify@all
         """
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:
-            if at_list == "nofity@all":  # @所有人
+            if at_list == "notify@all":  # @所有人
                 ats = " @所有人"
             else:
                 wxids = at_list.split(",")
