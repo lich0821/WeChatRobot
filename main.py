@@ -9,6 +9,7 @@ from wcferry import Wcf
 from configuration import Config
 from func_report_reminder import ReportReminder
 from robot import Robot
+from constants import ChatType
 
 
 def weather_report(robot: Robot) -> None:
@@ -61,6 +62,6 @@ def main(chat_type: int):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('-c', type=int, default=0, help='选择模型参数: 1, 2, 3, 4')
+    parser.add_argument('-c', type=int, default=0, help=f'选择模型参数序号: {ChatType.help_hint()}')
     args = parser.parse_args().c
     main(args)

@@ -7,13 +7,16 @@ import requests
 from random import randint
 
 
-class TigerBot():
+class TigerBot:
     def __init__(self, tbconf=None) -> None:
         self.LOG = logging.getLogger(__file__)
         self.tburl = "https://api.tigerbot.com/bot-service/ai_service/gpt"
         self.tbheaders = {"Authorization": "Bearer " + tbconf["key"]}
         self.tbmodel = tbconf["model"]
         self.fallback = ["滚", "快滚", "赶紧滚"]
+
+    def __repr__(self):
+        return 'TigerBot'
 
     def get_answer(self, msg: str, sender: str = None) -> str:
         payload = {

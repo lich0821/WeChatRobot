@@ -31,36 +31,38 @@ class Robot(Job):
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
 
-        if chat_type == ChatType.UnKnown.value:
-            if all(value is not None for value in self.config.TIGERBOT.values()):
+        if ChatType.is_in_chat_types(chat_type):
+            if chat_type == ChatType.TIGER_BOT.value and self.value_check(self.config.TIGERBOT.values()):
                 self.chat = TigerBot(self.config.TIGERBOT)
-            elif all(value is not None for value in self.config.CHATGPT.values()):
+            elif chat_type == ChatType.CHATGPT.value and self.value_check(self.config.CHATGPT.values()):
                 cgpt = self.config.CHATGPT
                 self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
-            elif all(value is not None for value in self.config.XINGHUO_WEB.values()):
+            elif chat_type == ChatType.XINGHUO_WEB.value and self.value_check(self.config.XINGHUO_WEB.values()):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif all(value is not None for value in self.config.CHATGLM.values()):
+            elif chat_type == ChatType.CHATGLM.value and self.value_check(self.config.CHATGLM.values()):
                 self.chat = ChatGLM(self.config.CHATGLM)
             else:
                 self.LOG.warning('未配置模型')
                 self.chat = None
         else:
-            if chat_type == ChatType.TIGER_BOT.value and all(
-                    value is not None for value in self.config.TIGERBOT.values()):
+            if self.value_check(self.config.TIGERBOT.values()):
                 self.chat = TigerBot(self.config.TIGERBOT)
-            elif chat_type == ChatType.CHATGPT.value and all(
-                    value is not None for value in self.config.CHATGPT.values()):
+            elif self.value_check(self.config.CHATGPT.values()):
                 cgpt = self.config.CHATGPT
                 self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
-            elif chat_type == ChatType.XINGHUO_WEB.value and all(
-                    value is not None for value in self.config.XINGHUO_WEB.values()):
+            elif self.value_check(self.config.XINGHUO_WEB.values()):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif chat_type == ChatType.CHATGLM.value and all(
-                    value is not None for value in self.config.CHATGLM.values()):
+            elif self.value_check(self.config.CHATGLM.values()):
                 self.chat = ChatGLM(self.config.CHATGLM)
             else:
                 self.LOG.warning('未配置模型')
                 self.chat = None
+
+        self.LOG.info(f'已选择: {self.chat}')
+
+    @staticmethod
+    def value_check(args: dict) -> bool:
+        return all(value is not None for key, value in args.items() if key != 'proxy')
 
     def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
@@ -131,22 +133,22 @@ class Robot(Job):
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
 
-            if msg.is_at(self.wxid):   # 被@
+            if msg.is_at(self.wxid):  # 被@
                 self.toAt(msg)
 
-            else:                # 其他消息
+            else:  # 其他消息
                 self.toChengyu(msg)
 
             return  # 处理完群聊信息，后面就不需要处理了
 
         # 非群聊信息，按消息类型进行处理
-        if msg.type == 37:     # 好友请求
+        if msg.type == 37:  # 好友请求
             self.autoAcceptFriendRequest(msg)
 
         elif msg.type == 10000:  # 系统信息
             self.sayHiToNewFriend(msg)
 
-        elif msg.type == 0x01:   # 文本消息
+        elif msg.type == 0x01:  # 文本消息
             # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
             if msg.from_self():
                 if msg.content == "^更新$":
@@ -213,7 +215,7 @@ class Robot(Job):
         格式: {"wxid": "NickName"}
         """
         contacts = self.wcf.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
-        return {contact["UserName"]: contact["NickName"]for contact in contacts}
+        return {contact["UserName"]: contact["NickName"] for contact in contacts}
 
     def keepRunningAndBlockProcess(self) -> None:
         """
