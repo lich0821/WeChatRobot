@@ -32,27 +32,27 @@ class Robot(Job):
         self.allContacts = self.getAllContacts()
 
         if ChatType.is_in_chat_types(chat_type):
-            if chat_type == ChatType.TIGER_BOT.value and self.value_check(self.config.TIGERBOT.values()):
+            if chat_type == ChatType.TIGER_BOT.value and self.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
-            elif chat_type == ChatType.CHATGPT.value and self.value_check(self.config.CHATGPT.values()):
+            elif chat_type == ChatType.CHATGPT.value and self.value_check(self.config.CHATGPT):
                 cgpt = self.config.CHATGPT
                 self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
-            elif chat_type == ChatType.XINGHUO_WEB.value and self.value_check(self.config.XINGHUO_WEB.values()):
+            elif chat_type == ChatType.XINGHUO_WEB.value and self.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif chat_type == ChatType.CHATGLM.value and self.value_check(self.config.CHATGLM.values()):
+            elif chat_type == ChatType.CHATGLM.value and self.value_check(self.config.CHATGLM):
                 self.chat = ChatGLM(self.config.CHATGLM)
             else:
                 self.LOG.warning('未配置模型')
                 self.chat = None
         else:
-            if self.value_check(self.config.TIGERBOT.values()):
+            if self.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
-            elif self.value_check(self.config.CHATGPT.values()):
+            elif self.value_check(self.config.CHATGPT):
                 cgpt = self.config.CHATGPT
                 self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
-            elif self.value_check(self.config.XINGHUO_WEB.values()):
+            elif self.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif self.value_check(self.config.CHATGLM.values()):
+            elif self.value_check(self.config.CHATGLM):
                 self.chat = ChatGLM(self.config.CHATGLM)
             else:
                 self.LOG.warning('未配置模型')
