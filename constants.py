@@ -8,3 +8,15 @@ class ChatType(IntEnum):
     CHATGPT = 2  # ChatGPT
     XINGHUO_WEB = 3  # 讯飞星火
     ChatGLM = 4  # ChatGLM
+
+    @staticmethod
+    def is_in_chat_types(chat_type: int) -> bool:
+        if chat_type in [ChatType.TIGER_BOT.value, ChatType.CHATGPT.value,
+                         ChatType.XINGHUO_WEB.value, ChatType.ChatGLM.value]:
+            return True
+        return False
+
+    @staticmethod
+    def help_hint():
+        return str({member.value: member.name for member in ChatType}).replace('{', '').replace('}', '')
+

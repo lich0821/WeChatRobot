@@ -6,7 +6,7 @@ from datetime import datetime
 import openai
 
 
-class ChatGPT():
+class ChatGPT:
 
     def __init__(self, key: str, api: str, proxy: str, prompt: str) -> None:
         openai.api_key = key
@@ -16,6 +16,9 @@ class ChatGPT():
             openai.proxy = {"http": proxy, "https": proxy}
         self.conversation_list = {}
         self.system_content_msg = {"role": "system", "content": prompt}
+
+    def __repr__(self):
+        return 'ChatGPT'
 
     def get_answer(self, question: str, wxid: str) -> str:
         # wxid或者roomid,个人时为微信id，群消息时为群id

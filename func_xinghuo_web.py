@@ -3,7 +3,7 @@
 from sparkdesk_web.core import SparkWeb
 
 
-class XinghuoWeb():
+class XinghuoWeb:
     def __init__(self, xhconf=None) -> None:
 
         self._sparkWeb = SparkWeb(
@@ -15,6 +15,9 @@ class XinghuoWeb():
         # 如果有提示词
         if xhconf["prompt"]:
             self._chat.chat(xhconf["prompt"])
+
+    def __repr__(self):
+        return 'XinghuoWeb'
 
     def get_answer(self, msg: str, sender: str = None) -> str:
         answer = self._chat.chat(msg)
