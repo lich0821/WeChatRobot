@@ -9,7 +9,7 @@
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 
 ## Quick Start
-0. 遇到问题先看看上面的文档、教程、FAQ 和微信机器人】沙雕行为合集。
+0. 遇到问题先看看上面的文档、教程、FAQ 和【微信机器人】沙雕行为合集。
 1. 安装 Python，例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
 2. 安装微信 `3.9.2.23`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/download/v39.0.0/WeChatSetup-3.9.2.23.exe)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
 3. 克隆项目
