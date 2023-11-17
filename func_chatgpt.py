@@ -8,14 +8,15 @@ import openai
 
 class ChatGPT:
 
-    def __init__(self, key: str, api: str, proxy: str, prompt: str) -> None:
-        openai.api_key = key
+    def __init__(self, conf: dict) -> None:
+        openai.api_key = conf["key"]
         # 自己搭建或第三方代理的接口
-        openai.api_base = api
+        openai.api_base = conf["api"]
+        proxy = conf["proxy"]
         if proxy:
             openai.proxy = {"http": proxy, "https": proxy}
         self.conversation_list = {}
-        self.system_content_msg = {"role": "system", "content": prompt}
+        self.system_content_msg = {"role": "system", "content": conf["prompt"]}
 
     def __repr__(self):
         return 'ChatGPT'
@@ -43,8 +44,6 @@ class ChatGPT:
             rsp = "OpenAI API 返回了错误：" + str(e1)
         except Exception as e0:
             rsp = "发生未知错误：" + str(e0)
-
-        # print(self.conversation_list[wxid])
 
         return rsp
 
@@ -84,12 +83,7 @@ if __name__ == "__main__":
     if not config:
         exit(0)
 
-    key = config.get("key")
-    api = config.get("api")
-    proxy = config.get("proxy")
-    prompt = config.get("prompt")
-
-    chat = ChatGPT(key, api, proxy, prompt)
+    chat = ChatGPT(config)
 
     while True:
         q = input(">>> ")

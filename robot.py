@@ -35,8 +35,7 @@ class Robot(Job):
             if chat_type == ChatType.TIGER_BOT.value and self.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
             elif chat_type == ChatType.CHATGPT.value and self.value_check(self.config.CHATGPT):
-                cgpt = self.config.CHATGPT
-                self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
+                self.chat = ChatGPT(self.config.CHATGPT)
             elif chat_type == ChatType.XINGHUO_WEB.value and self.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif chat_type == ChatType.CHATGLM.value and self.value_check(self.config.CHATGLM):
@@ -48,8 +47,7 @@ class Robot(Job):
             if self.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
             elif self.value_check(self.config.CHATGPT):
-                cgpt = self.config.CHATGPT
-                self.chat = ChatGPT(cgpt.get("key"), cgpt.get("api"), cgpt.get("proxy"), cgpt.get("prompt"))
+                self.chat = ChatGPT(self.config.CHATGPT)
             elif self.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif self.value_check(self.config.CHATGLM):
