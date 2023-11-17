@@ -1,6 +1,6 @@
 chinese_calendar
 lxml
-openai
+openai==0.27.6
 pandas
 pyyaml
 requests
@@ -12,4 +12,4 @@ websocket
 pillow
 jupyter_client
 zhdate
-ipykernel 
+ipykernel
