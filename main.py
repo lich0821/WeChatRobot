@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import signal
-import check_env
 
 from argparse import ArgumentParser
 
