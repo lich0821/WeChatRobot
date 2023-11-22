@@ -10,7 +10,7 @@
 
 ## Quick Start
 0. 遇到问题先看看上面的文档、教程、FAQ 和【微信机器人】沙雕行为合集。
-1. 安装 Python，例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
+1. 安装 Python>=3.9，例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
 2. 安装微信 `3.9.2.23`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/download/v39.0.0/WeChatSetup-3.9.2.23.exe)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
 3. 克隆项目
 ```sh
@@ -54,7 +54,14 @@ python main.py
 # 需要停止按 Ctrl+C
 ```
 
-如果你配置了多个模型，下面的内容才对你有帮助否则略过，通过参数可以选择要跑的模型。
+如果你配置了多个模型(不需要将其他配置注释或者移除)，下面的内容才对你有帮助否则略过，通过python main.py -h 通过参数可以选择要跑的模型。
+```sh
+# 查看帮助
+python main.py -h
+#optional arguments:
+#  -h, --help            show this help message and exit
+#  -c C, --chat_model C  选择要使用的AI模型，默认不选择，可选参数：1. tigerbot 模型 2. chatgpt 模型 3. 讯飞星火模型 4. chatglm 模型
+```
 ```sh
 # 例: 我想运行选择chatgpt的机器人
 python main.py -c 2
@@ -86,7 +93,7 @@ python main.py -c 2
 第一次运行的时候，可以在手机上往需要响应的群里发消息，打印的消息中方括号里的就是；多个群用 `,` 分隔。
 ```yaml
 groups:
-  enable: [] # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom
+  enable: [] # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom, 多个群用 `,` 分隔
 ```
 
 #### 配置 AI 模型

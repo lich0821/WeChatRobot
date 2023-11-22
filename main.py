@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import signal
+
 from argparse import ArgumentParser
 
 from wcferry import Wcf
