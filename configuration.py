@@ -28,9 +28,10 @@ class Config(object):
         yconfig = self._load_config()
         logging.config.dictConfig(yconfig["logging"])
         self.GROUPS = yconfig["groups"]["enable"]
-        self.CHATGPT = yconfig.get("chatgpt")
         self.NEWS = yconfig["news"]["receivers"]
         self.REPORT_REMINDERS = yconfig["report_reminder"]["receivers"]
-        self.TIGERBOT = yconfig.get("tigerbot")
-        self.XINGHUO_WEB = yconfig.get("xinghuo_web")
-        self.CHATGLM = yconfig.get("chatglm")
+
+        self.CHATGPT = yconfig.get("chatgpt", {})
+        self.TIGERBOT = yconfig.get("tigerbot", {})
+        self.XINGHUO_WEB = yconfig.get("xinghuo_web", {})
+        self.CHATGLM = yconfig.get("chatglm", {})
