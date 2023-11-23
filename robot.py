@@ -60,7 +60,9 @@ class Robot(Job):
 
     @staticmethod
     def value_check(args: dict) -> bool:
-        return all(value is not None for key, value in args.items() if key != 'proxy')
+        if args:
+            return all(value is not None for key, value in args.items() if key != 'proxy')
+        return False
 
     def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
