@@ -54,7 +54,7 @@ python main.py
 # 需要停止按 Ctrl+C
 ```
 
-如果你配置了多个模型(不需要将其他配置注释或者移除)，下面的内容才对你有帮助否则略过，通过python main.py -h 通过参数可以选择要跑的模型。
+如果你配置了多个模型（不需要将其他配置注释或者移除），下面的内容才对你有帮助否则略过，通过 python main.py -h 通过参数可以选择要跑的模型。
 ```sh
 # 查看帮助
 python main.py -h
@@ -62,6 +62,7 @@ python main.py -h
 #  -h, --help            show this help message and exit
 #  -c C, --chat_model C  选择要使用的AI模型，默认不选择，可选参数：1. tigerbot 模型 2. chatgpt 模型 3. 讯飞星火模型 4. chatglm 模型
 ```
+
 ```sh
 # 例: 我想运行选择chatgpt的机器人
 python main.py -c 2
@@ -99,6 +100,8 @@ groups:
 #### 配置 AI 模型
 为了使用 AI 模型，需要对相应模型并进行配置。
 
+使用 ChatGLM 见注意事项 [README.MD](base/chatglm/README.MD)
+
 ```yaml
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key
@@ -107,7 +110,7 @@ chatgpt:  # -----chatgpt配置这行不填-----
   prompt: 你是智能聊天机器人，你叫 wcferry  # 根据需要对角色进行设定
 
 chatglm:  # -----chatglm配置这行不填-----
-  key:  # key 暂时没有
+  key: sk-012345678901234567890123456789012345678901234567 # 这个应该不用动
   api: http://localhost:8000/v1  # 根据自己的chatglm地址修改
   proxy:  # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
   prompt: 你是智能聊天机器人，你叫小薇  # 根据需要对角色进行设定

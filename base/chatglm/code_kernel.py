@@ -2,11 +2,9 @@ import base64
 import os
 import queue
 import re
-import time
 from io import BytesIO
-from pprint import pprint
 from subprocess import PIPE
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional, Union
 
 import jupyter_client
 from PIL import Image

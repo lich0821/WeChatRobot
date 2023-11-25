@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import time
-import schedule
 from typing import Any, Callable
+
+import schedule
 
 
 class Job(object):

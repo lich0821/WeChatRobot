@@ -5,13 +5,12 @@ import json
 import os
 import random
 from datetime import datetime
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional
 
 import openai
+from base.chatglm.code_kernel import CodeKernel, execute
+from base.chatglm.tool_registry import dispatch_tool, extract_code, get_tools
 from wcferry import Wcf
-
-from chatglm.code_kernel import CodeKernel, execute
-from chatglm.tool_registry import dispatch_tool, extract_code, get_tools
 
 functions = get_tools()
 
@@ -19,24 +18,31 @@ functions = get_tools()
 class ChatGLM:
 
     def __init__(self, config={}, wcf: Optional[Wcf] = None, max_retry=5) -> None:
-        openai.api_key = config.get('key', 'XXX')
+        openai.api_key = config.get("key", "empty")
         # 自己搭建或第三方代理的接口
-        openai.api_base = config.get('api', 'http://localhost:8000/v1')
-        if config.get('proxy', None):
-            openai.proxy = {"http": config.get(
-                'proxy', None), "https": config.get('proxy', None)}
+        openai.api_base = config["api"]
+        proxy = config.get("proxy")
+        if proxy:
+            openai.proxy = {"http": proxy, "https": proxy}
         self.conversation_list = {}
         self.chat_type = {}
         self.max_retry = max_retry
         self.wcf = wcf
-        self.filePath = config.get('file_path', 'temp')
+        self.filePath = config["file_path"]
         self.kernel = CodeKernel()
-        self.system_content_msg = {"chat": [{"role": "system", "content": config.get('prompt', '你是智能聊天机器人，你叫小薇')}],
+        self.system_content_msg = {"chat": [{"role": "system", "content": config["prompt"]}],
                                    "tool": [{"role": "system", "content": "Answer the following questions as best as you can. You have access to the following tools:"}],
                                    "code": [{"role": "system", "content": "你是一位智能AI助手，你叫ChatGLM，你连接着一台电脑，但请注意不能联网。在使用Python解决任务时，你可以运行代码并得到结果，如果运行结果有错误，你需要尽可能对代码进行改进。你可以处理用户上传到电脑上的文件，文件默认存储路径是{}。".format(self.filePath)}]}
 
     def __repr__(self):
         return 'ChatGLM'
+
+    @staticmethod
+    def value_check(conf: dict) -> bool:
+        if conf:
+            if conf.get("api") and conf.get("prompt") and conf.get("file_path"):
+                return True
+        return False
 
     def get_answer(self, question: str, wxid: str) -> str:
         # wxid或者roomid,个人时为微信id，群消息时为群id

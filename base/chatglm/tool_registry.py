@@ -2,19 +2,15 @@ import inspect
 import json
 import random
 import re
-import time
 import traceback
 from copy import deepcopy
 from datetime import datetime
-from pprint import pformat
 from types import GenericAlias
 from typing import Annotated, get_origin
 
-import requests
-from func_news import News
+from base.chatglm.comfyUI_api import ComfyUIApi
+from base.func_news import News
 from zhdate import ZhDate
-
-from chatglm.comfyUI_api import ComfyUIApi
 
 _TOOL_HOOKS = {}
 _TOOL_DESCRIPTIONS = {}

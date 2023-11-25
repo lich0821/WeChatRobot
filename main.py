@@ -2,15 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import signal
-
 from argparse import ArgumentParser
 
-from wcferry import Wcf
-
+from base.func_report_reminder import ReportReminder
 from configuration import Config
-from func_report_reminder import ReportReminder
-from robot import Robot
 from constants import ChatType
+from robot import Robot
+from wcferry import Wcf
 
 
 def weather_report(robot: Robot) -> None:

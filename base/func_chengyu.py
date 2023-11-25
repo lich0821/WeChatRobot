@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import os
 import random
+
 import pandas as pd
 
 
 class Chengyu(object):
     def __init__(self) -> None:
-        self.df = pd.read_csv("chengyu.csv", delimiter="\t")
+        root = os.path.dirname(os.path.abspath(__file__))
+        self.df = pd.read_csv(f"{root}/chengyu.csv", delimiter="\t")
         self.cys, self.zis, self.yins = self._build_data()
 
     def _build_data(self):

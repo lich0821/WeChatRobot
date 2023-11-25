@@ -21,6 +21,13 @@ class ChatGPT:
     def __repr__(self):
         return 'ChatGPT'
 
+    @staticmethod
+    def value_check(conf: dict) -> bool:
+        if conf:
+            if conf.get("key") and conf.get("api") and conf.get("prompt"):
+                return True
+        return False
+
     def get_answer(self, question: str, wxid: str) -> str:
         # wxid或者roomid,个人时为微信id，群消息时为群id
         self.updateMessage(wxid, question, "user")

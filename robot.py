@@ -7,17 +7,16 @@ import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
 
-from wcferry import Wcf, WxMsg
-
-from constants import ChatType
+from base.func_chatglm import ChatGLM
+from base.func_chatgpt import ChatGPT
+from base.func_chengyu import cy
+from base.func_news import News
+from base.func_tigerbot import TigerBot
+from base.func_xinghuo_web import XinghuoWeb
 from configuration import Config
-from func_chatgpt import ChatGPT
-from func_chatglm import ChatGLM
-from func_chengyu import cy
-from func_news import News
-from func_tigerbot import TigerBot
-from func_xinghuo_web import XinghuoWeb
+from constants import ChatType
 from job_mgmt import Job
+from wcferry import Wcf, WxMsg
 
 
 class Robot(Job):
@@ -32,31 +31,31 @@ class Robot(Job):
         self.allContacts = self.getAllContacts()
 
         if ChatType.is_in_chat_types(chat_type):
-            if chat_type == ChatType.TIGER_BOT.value and self.value_check(self.config.TIGERBOT):
+            if chat_type == ChatType.TIGER_BOT.value and TigerBot.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
-            elif chat_type == ChatType.CHATGPT.value and self.value_check(self.config.CHATGPT):
+            elif chat_type == ChatType.CHATGPT.value and ChatGPT.value_check(self.config.CHATGPT):
                 self.chat = ChatGPT(self.config.CHATGPT)
-            elif chat_type == ChatType.XINGHUO_WEB.value and self.value_check(self.config.XINGHUO_WEB):
+            elif chat_type == ChatType.XINGHUO_WEB.value and XinghuoWeb.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif chat_type == ChatType.CHATGLM.value and self.value_check(self.config.CHATGLM):
+            elif chat_type == ChatType.CHATGLM.value and ChatGLM.value_check(self.config.CHATGLM):
                 self.chat = ChatGLM(self.config.CHATGLM)
             else:
-                self.LOG.warning('未配置模型')
+                self.LOG.warning("未配置模型")
                 self.chat = None
         else:
-            if self.value_check(self.config.TIGERBOT):
+            if TigerBot.value_check(self.config.TIGERBOT):
                 self.chat = TigerBot(self.config.TIGERBOT)
-            elif self.value_check(self.config.CHATGPT):
+            elif ChatGPT.value_check(self.config.CHATGPT):
                 self.chat = ChatGPT(self.config.CHATGPT)
-            elif self.value_check(self.config.XINGHUO_WEB):
+            elif XinghuoWeb.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif self.value_check(self.config.CHATGLM):
+            elif ChatGLM.value_check(self.config.CHATGLM):
                 self.chat = ChatGLM(self.config.CHATGLM)
             else:
-                self.LOG.warning('未配置模型')
+                self.LOG.warning("未配置模型")
                 self.chat = None
 
-        self.LOG.info(f'已选择: {self.chat}')
+        self.LOG.info(f"已选择: {self.chat}")
 
     @staticmethod
     def value_check(args: dict) -> bool:

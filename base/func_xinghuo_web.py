@@ -19,6 +19,12 @@ class XinghuoWeb:
     def __repr__(self):
         return 'XinghuoWeb'
 
+    @staticmethod
+    def value_check(conf: dict) -> bool:
+        if conf:
+            return all(conf.values())
+        return False
+
     def get_answer(self, msg: str, sender: str = None) -> str:
         answer = self._chat.chat(msg)
         return answer

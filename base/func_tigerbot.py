@@ -18,6 +18,12 @@ class TigerBot:
     def __repr__(self):
         return 'TigerBot'
 
+    @staticmethod
+    def value_check(conf: dict) -> bool:
+        if conf:
+            return all(conf.values())
+        return False
+
     def get_answer(self, msg: str, sender: str = None) -> str:
         payload = {
             "text": msg,
