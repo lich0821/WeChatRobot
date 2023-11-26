@@ -1,12 +1,12 @@
 # WeChatRobot
 一个基于 [WeChatFerry](https://github.com/lich0821/WeChatFerry) 的微信机器人示例。
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/5Xle4X_OcxLoIX9PJjYCmQ)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
-|:-:|:-:|:-:|:-:|
+| [📖 文档](https://wechatferry.readthedocs.io/) | [📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ) | [🙋 FAQ](https://mp.weixin.qq.com/s/5Xle4X_OcxLoIX9PJjYCmQ) | [🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g) |
+| :-------------------------------------------: | :-------------------------------------------------------------: | :--------------------------------------------------------: | :------------------------------------------------------------------------------: |
 
-|![碲矿](https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg)|![赞赏](https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg)|
-|:-:|:-:|
-|后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
+| ![碲矿](https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg) | ![赞赏](https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg) |
+| :---------------------------------------------------------: | :---------------------------------------------------------: |
+|               后台回复 `WeChatFerry` 加群交流               |                       如果你觉得有用                        |
 
 ## Quick Start
 0. 遇到问题先看看上面的文档、教程、FAQ 和【微信机器人】沙雕行为合集。
@@ -127,6 +127,37 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填-----
   GtToken:  # GtToken
   prompt: 你是智能聊天机器人，你叫 wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
 ```
+
+## 配置和风天气
+1. 为了使用和风天气API，需要注册账号并创建key。
+详细请见：[和风天气开发文档](https://dev.qweather.com/docs/)
+2. 获取经纬度：[经纬度查询网站](http://jingweidu.757dy.com/)
+只需要取小数点后2位即可：
+      例如：
+      - 天安门经纬度：`116.40,39.91`
+
+```yaml
+weather_key:  # 和风天气key  注册账号并创建项目然后复制相应的key：https://dev.qweather.com/docs/start/
+weather:  # -----天气配置这行不填-----
+  perseon1:  # 定时天气接收人1
+    wxid:  # 联系人1的 wxid
+    location:   # 联系人1地址经纬度
+  person2:  # 定时天气接收人2
+    wxid:   # 联系人2的 wxid
+    location:   # 联系人2地址经纬度
+  # 如果需要发给更多的人继续添加
+```
+效果：
+```
+今天天气:多云转晴
+当前温度:15℃
+最高温度:18℃
+最低温度:11℃
+日出时间:06:31
+日落时间:16:54
+```
+
+
 
 ## HTTP
 如需要使用 HTTP 接口，请参考 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)。

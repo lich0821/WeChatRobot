@@ -69,3 +69,13 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填 抓取方式详�
   fd:  # fd
   GtToken:  # GtToken
   prompt: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
+
+weather_key:  # 和风天气key  注册账号并创建项目然后复制相应的key：https://dev.qweather.com/docs/start/
+weather:  # -----天气配置这行不填-----
+  perseon1:  # 定时天气接收人1
+    wxid:  # 联系人1的 wxid
+    location:   # 联系人1地址经纬度
+  person2:  # 定时天气接收人2
+    wxid:   # 联系人2的 wxid
+    location:   # 联系人2地址经纬度
+  # 如果需要发给更多的人继续添加

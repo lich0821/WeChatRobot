@@ -11,6 +11,7 @@ from base.func_chatglm import ChatGLM
 from base.func_chatgpt import ChatGPT
 from base.func_chengyu import cy
 from base.func_news import News
+from base.func_weather import Weather
 from base.func_tigerbot import TigerBot
 from base.func_xinghuo_web import XinghuoWeb
 from configuration import Config
@@ -250,3 +251,13 @@ class Robot(Job):
         news = News().get_important_news()
         for r in receivers:
             self.sendTextMsg(news, r)
+
+
+    def weatherReport(self) -> None:
+        receivers = self.config.WEATHER
+        key = self.config.WEATHER_KEY
+        if (not receivers) or (not key):
+            return
+        for r in receivers:
+                weather = Weather(receivers[r]["location"], key).get_weather()
+                self.sendTextMsg(weather, receivers[r]["wxid"])
