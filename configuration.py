@@ -35,3 +35,11 @@ class Config(object):
         self.TIGERBOT = yconfig.get("tigerbot", {})
         self.XINGHUO_WEB = yconfig.get("xinghuo_web", {})
         self.CHATGLM = yconfig.get("chatglm", {})
+        
+        self.WEATHER = yconfig["weather"]
+        self.WEATHER_KEY = yconfig["weather_key"]
+
+if __name__ == "__main__":
+    config = Config()
+    print(config.WEATHER)
+    print(config.WEATHER_KEY)
