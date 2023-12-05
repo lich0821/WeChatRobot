@@ -19,6 +19,8 @@ from job_mgmt import Job
 from wcferry import Wcf, WxMsg
 
 
+__version__ = "39.0.7.0"
+
 class Robot(Job):
     """个性化自己的机器人
     """

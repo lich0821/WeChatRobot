@@ -1,7 +1,7 @@
 # WeChatRobot
 一个基于 [WeChatFerry](https://github.com/lich0821/WeChatFerry) 的微信机器人示例。
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/5Xle4X_OcxLoIX9PJjYCmQ)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/mFUwK2cJJrajVqYiM-GlDA)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
 |:-:|:-:|:-:|:-:|
 
 |![碲矿](https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg)|![赞赏](https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg)|
@@ -9,9 +9,12 @@
 |后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
 
 ## Quick Start
-0. 遇到问题先看看上面的文档、教程、FAQ 和【微信机器人】沙雕行为合集。
-1. 安装 Python>=3.9，例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
-2. 安装微信 `3.9.2.23`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/download/v39.0.0/WeChatSetup-3.9.2.23.exe)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
+0. 遇到问题先看看上面的文档、教程和 FAQ。
+    - 按照步骤来，版本保持一致，少走弯路。
+    - 按照步骤来，版本保持一致，少走弯路。
+    - 按照步骤来，版本保持一致，少走弯路。
+1. 安装 Python>=3.9（Python 12 需要自己编译依赖，慎选），例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
+2. 安装微信 `3.9.2.23`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/latest)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
 3. 克隆项目
 ```sh
 git clone https://github.com/lich0821/WeChatRobot.git
@@ -20,7 +23,7 @@ git clone https://github.com/lich0821/WeChatRobot.git
 git clone https://gitee.com/lch0821/WeChatRobot.git
 ```
 
-如果觉得克隆复杂，也可以直接下载[最新版](https://github.com/lich0821/WeChatRobot/releases/latest) (打不开试试[这个](https://gitee.com/lch0821/WeChatRobot/releases/latest)) 到本地解压。
+如果觉得克隆复杂，也可以直接下载 [最新版](https://github.com/lich0821/WeChatRobot/releases/latest) 到本地解压。
 
 4. 安装依赖
 ```sh
@@ -28,14 +31,16 @@ git clone https://gitee.com/lch0821/WeChatRobot.git
 python -m pip install -U pip
 # 安装必要依赖
 pip install -r requirements.txt
+# ChatGLM 还需要安装一个 kernel
+ipython kernel install --name chatglm3 --user
 ```
 
 5. 运行
 
-我们需要运行两次 main.py 第一次是生成配置文件 config.yaml, 第二次是真正跑你的机器人。
+我们需要运行两次 `main.py` 第一次是生成配置文件 `config.yaml`, 第二次是真正跑你的机器人。
 直接运行程序会自动拉起微信，如果微信未打开，会自动打开微信；如果版本不对，也会有提示；其他报错，请进群交流。
 
-下面代码为第一次运行：第一次运行 main.py 会在 WeChatRobot 目录下生成一个 config.yaml 文件，参照修改配置进行修改。
+下面代码为第一次运行：第一次运行 `main.py` 会在 WeChatRobot 目录下生成一个 `config.yaml` 文件，参照修改配置进行修改。
 
 其中 chatgpt、tigerbot、chatglm 和 xinghuo_web 是四种模型的配置信息，你需要配置它们的参数，不知道的可以加群交流。
 
@@ -54,7 +59,7 @@ python main.py
 # 需要停止按 Ctrl+C
 ```
 
-如果你配置了多个模型（不需要将其他配置注释或者移除），下面的内容才对你有帮助否则略过，通过 python main.py -h 通过参数可以选择要跑的模型。
+如果你配置了多个模型（不需要将其他配置注释或者移除），下面的内容才对你有帮助否则略过，通过 `python main.py -h` 通过参数可以选择要跑的模型。
 ```sh
 # 查看帮助
 python main.py -h
@@ -79,6 +84,7 @@ python main.py -c 2
 6. 停止
 
 不要那么粗暴，温柔点儿；
+
 不要直接关闭窗口，温柔点儿。
 
 输入：`Ctrl+C`。否则，会出现各种奇怪问题。

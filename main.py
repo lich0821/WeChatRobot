@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 from base.func_report_reminder import ReportReminder
 from configuration import Config
 from constants import ChatType
-from robot import Robot
+from robot import Robot, __version__
 from wcferry import Wcf
 
 
@@ -37,7 +37,7 @@ def main(chat_type: int):
     signal.signal(signal.SIGINT, handler)
 
     robot = Robot(config, wcf, chat_type)
-    robot.LOG.info("正在启动机器人···")
+    robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
 
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
