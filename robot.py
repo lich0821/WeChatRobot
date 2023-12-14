@@ -7,6 +7,9 @@ import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
 
+from wcferry import Wcf, WxMsg
+
+from base.func_bard import BardAssistant
 from base.func_chatglm import ChatGLM
 from base.func_chatgpt import ChatGPT
 from base.func_chengyu import cy
@@ -16,10 +19,9 @@ from base.func_xinghuo_web import XinghuoWeb
 from configuration import Config
 from constants import ChatType
 from job_mgmt import Job
-from wcferry import Wcf, WxMsg
 
+__version__ = "39.0.10.0"
 
-__version__ = "39.0.7.0"
 
 class Robot(Job):
     """个性化自己的机器人
