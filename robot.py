@@ -41,6 +41,8 @@ class Robot(Job):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif chat_type == ChatType.CHATGLM.value and ChatGLM.value_check(self.config.CHATGLM):
                 self.chat = ChatGLM(self.config.CHATGLM)
+            elif chat_type == ChatType.BardAssistant.value and BardAssistant.value_check(self.config.BardAssistant):
+                self.chat = BardAssistant(self.config.BardAssistant)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
@@ -53,6 +55,8 @@ class Robot(Job):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif ChatGLM.value_check(self.config.CHATGLM):
                 self.chat = ChatGLM(self.config.CHATGLM)
+            elif BardAssistant.value_check(self.config.BardAssistant):
+                self.chat = BardAssistant(self.config.BardAssistant)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
