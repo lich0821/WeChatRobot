@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import google.generativeai as genai
+
 
 class BardAssistant:
     def __init__(self, conf: dict) -> None:
@@ -9,7 +11,6 @@ class BardAssistant:
         genai.configure(api_key=self._api_key)
         self._bard = genai.GenerativeModel(self._model_name)
 
-    
     def __repr__(self):
         return 'BardAssistant'
 
@@ -22,6 +23,7 @@ class BardAssistant:
     def get_answer(self, msg: str, sender: str = None) -> str:
         response = self._bard.generate_content(msg)
         return response.text
+
 
 if __name__ == "__main__":
     from configuration import Config
