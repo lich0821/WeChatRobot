@@ -13,3 +13,4 @@ pillow
 jupyter_client
 zhdate
 ipykernel
+bardapi
