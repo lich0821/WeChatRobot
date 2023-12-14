@@ -1,7 +1,7 @@
 # WeChatRobot
 一个基于 [WeChatFerry](https://github.com/lich0821/WeChatFerry) 的微信机器人示例。
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/mFUwK2cJJrajVqYiM-GlDA)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/bdPNrbJYoXhezCzHMqLoEw)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
 |:-:|:-:|:-:|:-:|
 
 |![碲矿](https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg)|![赞赏](https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg)|
@@ -132,11 +132,11 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填-----
   fd:  # fd
   GtToken:  # GtToken
   prompt: 你是智能聊天机器人，你叫 wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
-```
-bard: # -----bard配置这行不填-----
-  api_key: # api-key 创建地址：https://ai.google.dev/pricing?hl=en，创建后复制过来即可  
-  model_name: gemini-pro # 新模型上线后可以选择模型
 
+bard: # -----bard配置这行不填-----
+  api_key: # api-key 创建地址：https://ai.google.dev/pricing，创建后复制过来即可
+  model_name: gemini-pro # 新模型上线后可以选择模型
+```
 
 ## HTTP
 如需要使用 HTTP 接口，请参考 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)。

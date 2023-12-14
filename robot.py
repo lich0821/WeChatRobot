@@ -20,7 +20,7 @@ from configuration import Config
 from constants import ChatType
 from job_mgmt import Job
 
-__version__ = "39.0.10.0"
+__version__ = "39.0.10.1"
 
 
 class Robot(Job):
