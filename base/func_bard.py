@@ -1,13 +1,13 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import bardapi
-import requests
+
 
 class BardAssistant:
     def __init__(self, conf: dict) -> None:
         self._token = conf["token"]
         self._bard = bardapi.core.Bard(self._token)
-
 
     def __repr__(self):
         return 'BardAssistant'
@@ -21,6 +21,7 @@ class BardAssistant:
     def get_answer(self, msg: str, sender: str = None) -> str:
         response = self._bard.get_answer(msg)
         return response['content']
+
 
 if __name__ == "__main__":
     from configuration import Config
