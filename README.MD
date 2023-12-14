@@ -133,6 +133,10 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填-----
   GtToken:  # GtToken
   prompt: 你是智能聊天机器人，你叫 wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
 ```
+bard: # -----bard配置这行不填-----
+  api_key: # api-key 创建地址：https://ai.google.dev/pricing?hl=en，创建后复制过来即可  
+  model_name: gemini-pro # 新模型上线后可以选择模型
+
 
 ## HTTP
 如需要使用 HTTP 接口，请参考 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)。

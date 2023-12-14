@@ -1,14 +1,15 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import bardapi
-
+import google.generativeai as genai
 
 class BardAssistant:
     def __init__(self, conf: dict) -> None:
-        self._token = conf["token"]
-        self._bard = bardapi.core.Bard(self._token)
+        self._api_key = conf["api_key"]
+        self._model_name = conf["model_name"]
+        genai.configure(api_key=self._api_key)
+        self._bard = genai.GenerativeModel(self._model_name)
 
+    
     def __repr__(self):
         return 'BardAssistant'
 
@@ -19,9 +20,8 @@ class BardAssistant:
         return False
 
     def get_answer(self, msg: str, sender: str = None) -> str:
-        response = self._bard.get_answer(msg)
-        return response['content']
-
+        response = self._bard.generate_content(msg)
+        return response.text
 
 if __name__ == "__main__":
     from configuration import Config
