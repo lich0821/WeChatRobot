@@ -71,9 +71,5 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填 抓取方式详�
   prompt: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
 
 bard: # -----bard配置这行不填-----
-  token: # token 长这样 eQhXAaCa3c3lUVXl-EvA210yikeNMsXHtDAX7doVyeFtW6ZbS-ENTSZg4-_713z1rWSXDQ.
-  # 你的bard的token，抓取方式见https://github.com/dsdanielpark/Bard-API，支持gemini(账号设置为美国)，cooike值为__Secure-1PSID
-  # 特殊注意事项：
-  # 1、只需要登录gmail抓取账号的__Secure-1PSID即可
-  # 2、如果网页登录了bard，已配置的机器人token会失效，需要清除浏览器上的google账号的cookie录后，重新抓取cooike值
-  # 3、新建的账号可能无法登录bard，需要提前确认是否可以使用bard
+  api_key: # key
+  model_name: gemini-pro # 模型，当前默认gemini-pro，后续开放其他模型，例如ultra可以更换
