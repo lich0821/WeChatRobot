@@ -71,5 +71,5 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填 抓取方式详�
   prompt: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
 
 bard: # -----bard配置这行不填-----
-  api_key: # key
+  api_key: # key获取地址：https://ai.google.dev/pricing?hl=en
   model_name: gemini-pro # 模型，当前默认gemini-pro，后续开放其他模型，例如ultra可以更换
