@@ -136,6 +136,10 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填-----
 bard: # -----bard配置这行不填-----
   api_key: # api-key 创建地址：https://ai.google.dev/pricing，创建后复制过来即可
   model_name: gemini-pro # 新模型上线后可以选择模型
+  proxy: http://127.0.0.1:7890  # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
+  # 提示词尽可能用英文，bard对中文提示词的效果不是很理想，下方提示词为英语老师的示例，请按实际需要修改,默认设置的提示词为谷歌创造的AI大语言模型
+  # I want you to act as a spoken English teacher and improver. I will speak to you in English and you will reply to me in English to practice my spoken English. I want you to keep your reply neat, limiting the reply to 100 words. I want you to strictly correct my grammar mistakes, typos, and factual errors. I want you to ask me a question in your reply. Now let's start practicing, you could ask me a question first. Remember, I want you to strictly correct my grammar mistakes, typos, and factual errors.
+  prompt: You am a large language model, trained by Google.
 ```
 
 ## HTTP
