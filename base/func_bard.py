@@ -1,7 +1,9 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import google.generativeai as genai
+
 
 class BardAssistant:
     def __init__(self, conf: dict) -> None:
@@ -9,11 +11,10 @@ class BardAssistant:
         self._model_name = conf["model_name"]
         self._prompt = conf['prompt']
         self._proxy = conf['proxy']
-        
+
         genai.configure(api_key=self._api_key)
         self._bard = genai.GenerativeModel(self._model_name)
 
-    
     def __repr__(self):
         return 'BardAssistant'
 
@@ -25,9 +26,9 @@ class BardAssistant:
         return False
 
     def get_answer(self, msg: str, sender: str = None) -> str:
-        response = self._bard.generate_content([{'role': 'user',
-                                'parts':[msg]}])
+        response = self._bard.generate_content([{'role': 'user', 'parts': [msg]}])
         return response.text
+
 
 if __name__ == "__main__":
     from configuration import Config
@@ -35,7 +36,6 @@ if __name__ == "__main__":
     if not config:
         exit(0)
 
-    
     bard_assistant = BardAssistant(config)
     if bard_assistant._proxy:
         os.environ['HTTP_PROXY'] = bard_assistant._proxy
