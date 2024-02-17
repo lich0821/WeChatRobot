@@ -50,8 +50,9 @@ report_reminder:
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key
   api: https://api.openai.com/v1  # 如果你不知道这是干嘛的，就不要改
+  model: gpt-3.5-turbo
   proxy:  # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
-  prompt: 你是智能聊天机器人，你叫wcferry  # 根据需要对角色进行设定
+  prompt: 你是智能聊天机器人，你叫 wcferry  # 根据需要对角色进行设定
 
 chatglm:  # -----chatglm配置这行不填-----
   key: sk-012345678901234567890123456789012345678901234567 # 这个应该不用动
@@ -68,7 +69,7 @@ xinghuo_web:  # -----讯飞星火web模式api配置这行不填 抓取方式详�
   cookie:  # cookie
   fd:  # fd
   GtToken:  # GtToken
-  prompt: 你是智能聊天机器人，你叫wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
+  prompt: 你是智能聊天机器人，你叫 wcferry。请用这个角色回答我的问题  # 根据需要对角色进行设定
 
 bard: # -----bard配置这行不填-----
   api_key: # api-key 创建地址：https://ai.google.dev/pricing?hl=en，创建后复制过来即可  

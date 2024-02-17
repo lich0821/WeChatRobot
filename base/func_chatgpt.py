@@ -1,22 +1,26 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
 from datetime import datetime
 
-import openai
+from openai import APIConnectionError, APIError, AuthenticationError, OpenAI
 
 
-class ChatGPT:
-
+class ChatGPT():
     def __init__(self, conf: dict) -> None:
-        openai.api_key = conf["key"]
-        # 自己搭建或第三方代理的接口
-        openai.api_base = conf["api"]
-        proxy = conf["proxy"]
+        key = conf.get("key")
+        api = conf.get("api")
+        proxy = conf.get("proxy")
+        prompt = conf.get("prompt")
+        self.model = conf.get("model", "gpt-3.5-turbo")
+        self.LOG = logging.getLogger("ChatGPT")
         if proxy:
-            openai.proxy = {"http": proxy, "https": proxy}
+            self.client = OpenAI(api_key=key, base_url=api, proxy={"http": proxy, "https": proxy})
+        else:
+            self.client = OpenAI(api_key=key, base_url=api)
         self.conversation_list = {}
-        self.system_content_msg = {"role": "system", "content": conf["prompt"]}
+        self.system_content_msg = {"role": "system", "content": prompt}
 
     def __repr__(self):
         return 'ChatGPT'
@@ -31,26 +35,23 @@ class ChatGPT:
     def get_answer(self, question: str, wxid: str) -> str:
         # wxid或者roomid,个人时为微信id，群消息时为群id
         self.updateMessage(wxid, question, "user")
-
+        rsp = ""
         try:
-            ret = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=self.conversation_list[wxid],
-                temperature=0.2
-            )
-
-            rsp = ret["choices"][0]["message"]["content"]
+            ret = self.client.chat.completions.create(model=self.model,
+                                                      messages=self.conversation_list[wxid],
+                                                      temperature=0.2)
+            rsp = ret.choices[0].message.content
             rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
             rsp = rsp.replace("\n\n", "\n")
             self.updateMessage(wxid, rsp, "assistant")
-        except openai.error.AuthenticationError as e3:
-            rsp = "OpenAI API 认证失败，请检查 API 密钥是否正确"
-        except openai.error.APIConnectionError as e2:
-            rsp = "无法连接到 OpenAI API，请检查网络连接"
-        except openai.error.APIError as e1:
-            rsp = "OpenAI API 返回了错误：" + str(e1)
+        except AuthenticationError:
+            self.LOG.error("OpenAI API 认证失败，请检查 API 密钥是否正确")
+        except APIConnectionError:
+            self.LOG.error("无法连接到 OpenAI API，请检查网络连接")
+        except APIError as e1:
+            self.LOG.error(f"OpenAI API 返回了错误：{str(e1)}")
         except Exception as e0:
-            rsp = "发生未知错误：" + str(e0)
+            self.LOG.error(f"发生未知错误：{str(e0)}")
 
         return rsp
 
