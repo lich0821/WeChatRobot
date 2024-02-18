@@ -4,6 +4,7 @@
 import logging
 from datetime import datetime
 
+import httpx
 from openai import APIConnectionError, APIError, AuthenticationError, OpenAI
 
 
@@ -16,7 +17,7 @@ class ChatGPT():
         self.model = conf.get("model", "gpt-3.5-turbo")
         self.LOG = logging.getLogger("ChatGPT")
         if proxy:
-            self.client = OpenAI(api_key=key, base_url=api, proxy={"http": proxy, "https": proxy})
+            self.client = OpenAI(api_key=key, base_url=api, http_client=httpx.Client(proxy=proxy))
         else:
             self.client = OpenAI(api_key=key, base_url=api)
         self.conversation_list = {}
