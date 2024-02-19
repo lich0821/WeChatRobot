@@ -78,3 +78,7 @@ bard: # -----bard配置这行不填-----
   # 提示词尽可能用英文，bard对中文提示词的效果不是很理想，下方提示词为英语老师的示例，请按实际需要修改,默认设置的提示词为谷歌创造的AI大语言模型
   # I want you to act as a spoken English teacher and improver. I will speak to you in English and you will reply to me in English to practice my spoken English. I want you to keep your reply neat, limiting the reply to 100 words. I want you to strictly correct my grammar mistakes, typos, and factual errors. I want you to ask me a question in your reply. Now let's start practicing, you could ask me a question first. Remember, I want you to strictly correct my grammar mistakes, typos, and factual errors.
   prompt: You am a large language model, trained by Google.
+
+zhipu:  # -----zhipu配置这行不填-----
+  api_key:  #api key
+  model: glm-4  # 模型类型
