@@ -1,19 +1,15 @@
-from pyexpat import model
 from zhipuai import ZhipuAI
 
 class ZhiPu():
     def __init__(self, conf: dict) -> None:
-        api_key = conf.get("api_key")
-        model = conf.get("model", "glm-4") # 默认使用 glm-4 模型
-        self.api_key = api_key
-        self.model = model
-        self.client = ZhipuAI(api_key=api_key)
+        self.api_key = conf.get("api_key")
+        self.model = conf.get("model", "glm-4") # 默认使用 glm-4 模型
+        self.client = ZhipuAI(api_key=self.api_key)
         self.converstion_list = {}
     
     @staticmethod
     def value_check(conf: dict) -> bool:
-        if conf:
-            if conf.get("api_key") : 
+        if conf and conf.get("api_key") : 
                 return True
         return False
 

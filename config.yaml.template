@@ -81,4 +81,4 @@ bard: # -----bard配置这行不填-----
 
 zhipu:  # -----zhipu配置这行不填-----
   api_key:  #api key
-  model: glm-4  # 模型类型
+  model:   # 模型类型
