@@ -9,6 +9,7 @@ class ChatType(IntEnum):
     XINGHUO_WEB = 3  # 讯飞星火
     CHATGLM = 4  # ChatGLM
     BardAssistant = 5  # Google Bard
+    ZhiPu = 6  # ZhiPu
 
     @staticmethod
     def is_in_chat_types(chat_type: int) -> bool:

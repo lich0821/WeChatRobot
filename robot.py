@@ -6,6 +6,7 @@ import time
 import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
+from base.func_zhipu import ZhiPu
 
 from wcferry import Wcf, WxMsg
 
@@ -45,6 +46,8 @@ class Robot(Job):
                 self.chat = ChatGLM(self.config.CHATGLM)
             elif chat_type == ChatType.BardAssistant.value and BardAssistant.value_check(self.config.BardAssistant):
                 self.chat = BardAssistant(self.config.BardAssistant)
+            elif chat_type == ChatType.ZhiPu.value and ZhiPu.value_check(self.config.ZHIPU):
+                self.chat = ZhiPu(self.config.ZHIPU)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
@@ -59,6 +62,8 @@ class Robot(Job):
                 self.chat = ChatGLM(self.config.CHATGLM)
             elif BardAssistant.value_check(self.config.BardAssistant):
                 self.chat = BardAssistant(self.config.BardAssistant)
+            elif ZhiPu.value_check(self.config.ZhiPu):
+                self.chat = ZhiPu(self.config.ZhiPu)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None

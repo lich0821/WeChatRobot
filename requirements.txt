@@ -14,3 +14,4 @@ jupyter_client
 zhdate
 ipykernel
 google-generativeai
+zhipuai
