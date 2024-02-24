@@ -1,6 +1,6 @@
 chinese_calendar
 lxml
-openai
+openai>1.0.0
 pandas
 pyyaml
 requests
