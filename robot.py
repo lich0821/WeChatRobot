@@ -187,7 +187,8 @@ class Robot(Job):
                 try:
                     msg = wcf.get_msg()
                     self.LOG.info(msg)
-                    self.processMsg(msg)
+                    t = Thread(target=self.processMsg,args=(msg,))
+                    t.start()
                 except Empty:
                     continue  # Empty message
                 except Exception as e:
