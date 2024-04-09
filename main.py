@@ -45,7 +45,7 @@ def main(chat_type: int):
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
-    # 更新机器人回复权限
+    # 更新机器人回复用户（好友）响应权限
     init_permission(wcf, config)
     user_id = wcf.get_user_info()
     user_id = user_id['wxid']
