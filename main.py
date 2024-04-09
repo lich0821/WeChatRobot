@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import signal
+import threading
 from argparse import ArgumentParser
+
+from wcferry import Wcf
 
 from base.func_report_reminder import ReportReminder
 from configuration import Config
 from constants import ChatType
+from permission import init_permission, update_permission
 from robot import Robot, __version__
-from wcferry import Wcf
 
 
 def weather_report(robot: Robot) -> None:
@@ -42,6 +45,16 @@ def main(chat_type: int):
     # 机器人启动发送测试消息
     robot.sendTextMsg("机器人启动成功！", "filehelper")
 
+    # 更新机器人回复权限
+    init_permission(wcf, config)
+    user_id = wcf.get_user_info()
+    user_id = user_id['wxid']
+    database_file = "{}_permission.db".format(user_id)
+
+    # add a threading to run update_permission
+    t = threading.Thread(target=update_permission, args=(database_file,))
+    t.start()
+    
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？
     robot.enableReceivingMsg()  # 加队列

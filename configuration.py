@@ -28,6 +28,7 @@ class Config(object):
         yconfig = self._load_config()
         logging.config.dictConfig(yconfig["logging"])
         self.GROUPS = yconfig["groups"]["enable"]
+        self.PERMISSION = yconfig["permission"]["default"]
         self.NEWS = yconfig["news"]["receivers"]
         self.REPORT_REMINDERS = yconfig["report_reminder"]["receivers"]
 

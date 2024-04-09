@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Example</title>
+</head>
+<body>
+    <a href="/update"><h1>Update</h1></a>
+    <h1>Contacts</h1>
+<table>
+    <thead><tr>
+        <th>wxid</th>
+        <th>code</th>
+        <th>remark</th>
+        <th>name</th>
+        <th>country</th>
+        <th>province</th>
+        <th>city</th>
+        <th>gender</th>
+        <th>permission</th>
+        <th>permission_end_time</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in users %}
+    <tr>
+        <td>{{item[0]}}</td>
+        <td>{{item[1]}}</td>
+        <td>{{item[2]}}</td>
+        <td>{{item[3]}}</td>
+        <td>{{item[4]}}</td>
+        <td>{{item[5]}}</td>
+        <td>{{item[6]}}</td>
+        <td>{{item[7]}}</td>
+        <td>{{item[8]}}</td>
+        <td>{{item[9]}}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+</body>
+</html>

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 import logging
 import re
+import sqlite3
 import time
 import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
-from base.func_zhipu import ZhiPu
 
 from wcferry import Wcf, WxMsg
 
@@ -17,6 +18,7 @@ from base.func_chengyu import cy
 from base.func_news import News
 from base.func_tigerbot import TigerBot
 from base.func_xinghuo_web import XinghuoWeb
+from base.func_zhipu import ZhiPu
 from configuration import Config
 from constants import ChatType
 from job_mgmt import Job
@@ -116,19 +118,64 @@ class Robot(Job):
         if not self.chat:  # 没接 ChatGPT，固定回复
             rsp = "你@我干嘛？"
         else:  # 接了 ChatGPT，智能回复
-            q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
-            rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
-
-        if rsp:
-            if msg.from_group():
-                self.sendTextMsg(rsp, msg.roomid, msg.sender)
-            else:
-                self.sendTextMsg(rsp, msg.sender)
-
-            return True
-        else:
-            self.LOG.error(f"无法从 ChatGPT 获得答案")
-            return False
+            # 检查信息发送者是否在权限数据库中
+            user_id = self.wcf.get_user_info()
+            user_id = user_id['wxid']   
+            database_file = "{}_permission.db".format(user_id)
+            conn = sqlite3.connect(database_file)
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM permission WHERE wxid = ?", (msg.sender,))
+            result = cursor.fetchone()
+            conn.close()
+            if result:
+                permission = result[-2]
+                permission_end_time = datetime.datetime.strptime(result[-1], "%Y-%m-%d %H:%M:%S")
+                now = datetime.datetime.now()
+                if msg.from_group():    # 来自群聊
+                    if permission >= 2 and now < permission_end_time:
+                        q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+                        rsp = self.chat.get_answer(q, msg.roomid)
+                        if rsp:
+                            self.sendTextMsg(rsp, msg.roomid, msg.sender)
+                            return True
+                        else:
+                            self.LOG.error(f"无法从 ChatGPT 获得答案")
+                            return False
+                    else:
+                        self.LOG.error("{}没有被授予权限或在限制期内。".format(msg.sender))
+                        return False
+                else:       # 来自私聊
+                    if permission%2 == 1 and now < permission_end_time:
+                        q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+                        rsp = self.chat.get_answer(q, msg.sender)
+                        if rsp:
+                            self.sendTextMsg(rsp, msg.sender)
+                            return True
+                        else:
+                            self.LOG.error(f"无法从 ChatGPT 获得答案")
+                            return False
+                    else:
+                        self.LOG.error("{}没有被授予权限或在限制期内。".format(msg.sender))
+                        return False
+            else:   # 不在权限数据库中，肯定不是好友，且此消息来自群聊
+                default_permission = 2      # 第一次来自群聊响应，权限设置为2
+                default_permission_end_time = '2099-12-31 23:59:59'
+                remark = "用户来自群聊" + msg.roomid
+                # 在数据库中插入记录
+                conn = sqlite3.connect(database_file)
+                cursor = conn.cursor()
+                sql = "INSERT INTO permission (wxid, remark, permission, permission_end_time) VALUES (?, ?, ?, ?)"
+                conn.execute(sql, (msg.sender, remark, default_permission, default_permission_end_time))
+                conn.commit()
+                conn.close()
+                q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+                rsp = self.chat.get_answer(q, msg.roomid)
+                if rsp:
+                    self.sendTextMsg(rsp, msg.roomid, msg.sender)
+                    return True
+                else:
+                    self.LOG.error(f"无法从 ChatGPT 获得答案")
+                    return False
 
     def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
