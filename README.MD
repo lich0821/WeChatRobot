@@ -6,10 +6,10 @@
 
 |![碲矿](https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg)|![赞赏](https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg)|
 |:-:|:-:|
-|后台回复 `WeChatFerry` 加群交流|如果你觉得有用|
+|后台回复 `WCF` 加群交流|如果你觉得有用|
 
 ## Quick Start
-0. 遇到问题先看看上面的文档、教程和 FAQ。
+0. 遇到问题先看看上面的**文档、教程和 FAQ。**
     - 按照步骤来，版本保持一致，少走弯路。
     - 按照步骤来，版本保持一致，少走弯路。
     - 按照步骤来，版本保持一致，少走弯路。
@@ -143,6 +143,10 @@ bard: # -----bard配置这行不填-----
 ```
 
 ## HTTP
-如需要使用 HTTP 接口，请参考 [wcfhttp](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)。
+如需要使用 HTTP 接口，请参考:
+* [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust），开箱即用：[快速开始](https://github.com/lich0821/wcf-client-rust?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)。
 
-[![PyPi](https://img.shields.io/pypi/v/wcfhttp.svg)](https://pypi.python.org/pypi/wcfhttp) [![Downloads](https://static.pepy.tech/badge/wcfhttp)](https://pypi.python.org/pypi/wcfhttp) [![Documentation Status](https://readthedocs.org/projects/wechatferry/badge/?version=latest)](https://wechatferry.readthedocs.io/zh/latest/?badge=latest)
+* GoHttp（基于 Go），参考 [GoHttp README.MD](https://github.com/lich0821/WeChatFerry/blob/master/clients/gohttp/README.md)
+
+* ~~wcfhttp（基于 Python）~~
+❗ **wcfhttp 不再维护，有需要可以使用 [WcfRust](https://github.com/lich0821/wcf-client-rust) 或者 [GoHttp](clients/gohttp/README.md)。**
