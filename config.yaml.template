@@ -51,6 +51,13 @@ news:
 report_reminder:
   receivers: []  # 定时日报周报月报提醒（roomid 或者 wxid）
 
+azure:
+  key: # 填写你 Azure OpenAI API key
+  endpoint: https://XXXXXX.openai.azure.com/
+  deployment_name: XXXXXX
+  api_version: 2024-02-15-preview
+  prompt: 你是智能聊天机器人，你叫 wcferry  # 根据需要对角色进行设定
+
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key
   api: https://api.openai.com/v1  # 如果你不知道这是干嘛的，就不要改

@@ -14,6 +14,7 @@ from wcferry import Wcf, WxMsg
 from base.func_bard import BardAssistant
 from base.func_chatglm import ChatGLM
 from base.func_chatgpt import ChatGPT
+from base.func_azure import Azure
 from base.func_chengyu import cy
 from base.func_news import News
 from base.func_tigerbot import TigerBot
@@ -42,6 +43,8 @@ class Robot(Job):
                 self.chat = TigerBot(self.config.TIGERBOT)
             elif chat_type == ChatType.CHATGPT.value and ChatGPT.value_check(self.config.CHATGPT):
                 self.chat = ChatGPT(self.config.CHATGPT)
+            elif chat_type == ChatType.Azure.value and Azure.value_check(self.config.AZURE):
+                self.chat = Azure(self.config.AZURE)
             elif chat_type == ChatType.XINGHUO_WEB.value and XinghuoWeb.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif chat_type == ChatType.CHATGLM.value and ChatGLM.value_check(self.config.CHATGLM):
@@ -58,6 +61,8 @@ class Robot(Job):
                 self.chat = TigerBot(self.config.TIGERBOT)
             elif ChatGPT.value_check(self.config.CHATGPT):
                 self.chat = ChatGPT(self.config.CHATGPT)
+            elif Azure.value_check(self.config.AZURE):
+                self.chat = Azure(self.config.AZURE)
             elif XinghuoWeb.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif ChatGLM.value_check(self.config.CHATGLM):
@@ -202,7 +207,8 @@ class Robot(Job):
 
         # 非群聊信息，按消息类型进行处理
         if msg.type == 37:  # 好友请求
-            self.autoAcceptFriendRequest(msg)
+            # self.autoAcceptFriendRequest(msg)
+            pass
 
         elif msg.type == 10000:  # 系统信息
             self.sayHiToNewFriend(msg)
@@ -296,11 +302,23 @@ class Robot(Job):
             self.LOG.error(f"同意好友出错：{e}")
 
     def sayHiToNewFriend(self, msg: WxMsg) -> None:
-        nickName = re.findall(r"你已添加了(.*)，现在可以开始聊天了。", msg.content)
+        # nickName = re.findall(r"你已添加了(.*)，现在可以开始聊天了。", msg.content)
+        nickName = re.findall(r"You have added (.*) as your Weixin contact. Start chatting!", msg.content)
         if nickName:
             # 添加了好友，更新好友列表
             self.allContacts[msg.sender] = nickName[0]
-            self.sendTextMsg(f"Hi {nickName[0]}，我自动通过了你的好友请求。", msg.sender)
+            # self.sendTextMsg(f"Hi {nickName[0]}，我自动通过了你的好友请求。", msg.sender)
+
+            # 更新机器人响应好友权限
+            user_id = self.wcf.get_user_info()
+            user_id = user_id['wxid']   
+            database_file = "{}_permission.db".format(user_id)
+            conn = sqlite3.connect(database_file)
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO permission (wxid, permission, permission_end_time timestamp) VALUES (?, ?, ?)", (msg.sender, self.config.PERMISSION, '2099-12-31 23:59:59'))
+            conn.commit()
+            cursor.close()
+            conn.close()
 
     def newsReport(self) -> None:
         receivers = self.config.NEWS

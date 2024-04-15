@@ -80,6 +80,7 @@ python main.py -c 2
 >> 2. chatgpt 模型
 >> 3. 讯飞星火模型
 >> 4. chatglm 模型
+>> 7. Azure 模型
 
 6. 停止
 
@@ -122,6 +123,13 @@ permission:
 使用 ChatGLM 见注意事项 [README.MD](base/chatglm/README.MD)
 
 ```yaml
+azure:
+  key: # 填写你 Azure OpenAI API key
+  endpoint: https://XXXXXX.openai.azure.com/
+  deployment_name: XXXXXX
+  api_version: 2024-02-15-preview
+  prompt: 你是智能聊天机器人，你叫 wcferry  # 根据需要对角色进行设定
+
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key
   api: https://api.openai.com/v1  # 如果你不知道这是干嘛的，就不要改

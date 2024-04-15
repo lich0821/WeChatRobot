@@ -27,7 +27,7 @@ def init_permission(wcf: Wcf, config: Config):
         cursor.execute('''CREATE TABLE permission
                 (wxid text, code text, remark text, name text, country text, province text,city text, gender text, permission int, permission_end_time timestamp)''')
         conn.commit()
-        # 将微信通讯录导入数据库，默认permission为2，permission_end_time为2099-12-31 23:59:59
+        # 将微信通讯录导入数据库，permission_end_time为2099-12-31 23:59:59
         default_permission = config.PERMISSION
         default_permission_end_time = '2099-12-31 23:59:59'
         wcf.get_contacts()
@@ -45,7 +45,14 @@ def init_permission(wcf: Wcf, config: Config):
         wcf.get_contacts()
         contact_list = wcf.contacts
         for contact in contact_list:
-            cursor.execute("UPDATE permission SET code = ?, remark = ?, name = ?, country = ?,province = ?, city = ?, gender = ? WHERE wxid = ?", (contact['code'], contact['remark'], contact['name'], contact['country'], contact['province'], contact['city'], contact['gender'], contact['wxid']))
+            # 查询数据库中是否存在该联系人
+            cursor.execute("SELECT * FROM permission WHERE wxid = ?", (contact['wxid'],))
+            result = cursor.fetchone()
+            if result is None:
+                cursor.execute("INSERT INTO permission VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",(
+                    contact['wxid'], contact['code'], contact['remark'], contact['name'], contact['country'], contact['province'], contact['city'], contact['gender'], config.PERMISSION, '2099-12-31 23:59:59'))
+            else:
+                cursor.execute("UPDATE permission SET code = ?, remark = ?, name = ?, country = ?,province = ?, city = ?, gender = ? WHERE wxid = ?", (contact['code'], contact['remark'], contact['name'], contact['country'], contact['province'], contact['city'], contact['gender'], contact['wxid']))
         conn.commit()
         # 关闭数据库
         conn.close()
