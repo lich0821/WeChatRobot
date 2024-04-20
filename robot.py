@@ -149,7 +149,9 @@ class Robot(Job):
                 self.toAt(msg)
 
             else:  # 其他消息
-                self.toChengyu(msg)
+                keywords = ["二狗", "终结者", "小东"]
+                if any(keyword in msg.content for keyword in keywords):
+                    self.toAt(msg)
 
             return  # 处理完群聊信息，后面就不需要处理了
 
