@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}" />
+    <title>Table Example</title>
+</head>
+<body>
+<center>
+    <h1>Update</h1>
+    <form method="POST" action="/update">
+        <label for="name">微信ID:</label>
+        <input type="text" id="wxid_field" name="wxid_field">
+        <br>
+        <label for="name">权限:</label>
+        <select name="permission_field" id="permission_field">
+            <option value="0">0 </option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+        <br>
+        <label for="name">权限结束时间:</label>
+        <input type="datetime-local" id="permission_end_time_field" name="permission_end_time_field" value="2024-04-08T00:00" min="2024-04-08T00:00" max="2099-12-31T23:59" />
+        <br>
+
+        <input type="submit" value="更新">
+    </form>
+    <hr>
+    <h2>权限说明</h2>
+    <a>0：群聊和私聊都不回应</a><br>
+    <a>1：群聊不回应，私聊回应</a><br>
+    <a>2：群聊回应，私聊不回应</a><br>
+    <a>3：群聊和私聊都回应</a><br>
+</center>
+</body>
+</html>

@@ -1,0 +1,38 @@
+input[type="text"],
+input[type="email"],
+input[type="datetime-local"],
+select {
+  border: 2px solid #000;
+  margin: 0 0 1em 0;
+  padding: 8px;
+  width: 14%;
+  font-size: 20px;
+}
+
+input[type="submit"] {
+    border: 3px solid #333;
+    background-color: #e7dcdc;
+    border-radius: 5px;
+    padding: 10px 2em;
+    font-weight: bold;
+    color: #333;
+    font-size: 20px;
+  }
+  
+input[type="submit"]:hover, input[type="submit"]:focus {
+    background-color: #333;
+}
+
+label {
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+a {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 5px;
+}
