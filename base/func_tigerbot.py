@@ -29,16 +29,16 @@ class TigerBot:
             "text": msg,
             "modelVersion": self.tbmodel
         }
-        rsp = ""
+        response = ""
         try:
-            rsp = requests.post(self.tburl, headers=self.tbheaders, json=payload).json()
-            rsp = rsp["data"]["result"][0]
+            response = requests.post(self.tburl, headers=self.tbheaders, json=payload).json()
+            response = response["data"]["result"][0]
         except Exception as e:
-            self.LOG.error(f"{e}: {payload}\n{rsp}")
+            self.LOG.error(f"{e}: {payload}\n{response}")
             idx = randint(0, len(self.fallback) - 1)
-            rsp = self.fallback[idx]
+            response = self.fallback[idx]
 
-        return rsp
+        return response
 
 
 if __name__ == "__main__":

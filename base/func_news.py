@@ -25,7 +25,7 @@ class News(object):
         try:
             rsp = requests.post(url=url, headers=self.headers, data=data)
             data = json.loads(rsp.text)["data"]["telegram"]["data"][0]
-            news = data["descr"]
+            important_news = data["descr"]
             timestamp = data["time"]
             ts = time.localtime(timestamp)
             weekday_news = datetime(*ts[:6]).weekday()
@@ -39,8 +39,8 @@ class News(object):
 
         fmt_time = time.strftime("%Y年%m月%d日", ts)
 
-        news = re.sub(r"(\d{1,2}、)", r"\n\1", news)
-        fmt_news = "".join(etree.HTML(news).xpath(" // text()"))
+        important_news = re.sub(r"(\d{1,2}、)", r"\n\1", important_news)
+        fmt_news = "".join(etree.HTML(important_news).xpath(" // text()"))
         fmt_news = re.sub(r"周[一|二|三|四|五|六|日]你需要知道的", r"", fmt_news)
 
         return f"{fmt_time} {self.week[weekday_news]}\n{fmt_news}"

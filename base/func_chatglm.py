@@ -17,10 +17,10 @@ functions = get_tools()
 
 class ChatGLM:
 
-    def __init__(self, config={}, wcf: Optional[Wcf] = None, max_retry=5) -> None:
-        key = config.get("key", 'empty')
-        api = config.get("api")
-        proxy = config.get("proxy")
+    def __init__(self, config_dict={}, wcf: Optional[Wcf] = None, max_retry=5) -> None:
+        key = config_dict.get("key", 'empty')
+        api = config_dict.get("api")
+        proxy = config_dict.get("proxy")
         if proxy:
             self.client = OpenAI(api_key=key, base_url=api, http_client=httpx.Client(proxy=proxy))
         else:
@@ -29,9 +29,9 @@ class ChatGLM:
         self.chat_type = {}
         self.max_retry = max_retry
         self.wcf = wcf
-        self.filePath = config["file_path"]
+        self.filePath = config_dict["file_path"]
         self.kernel = CodeKernel()
-        self.system_content_msg = {"chat": [{"role": "system", "content": config["prompt"]}],
+        self.system_content_msg = {"chat": [{"role": "system", "content": config_dict["prompt"]}],
                                    "tool": [{"role": "system",
                                              "content": "Answer the following questions as best as you can. You have access to the following tools:"}],
                                    "code": [{"role": "system",
@@ -62,8 +62,7 @@ class ChatGLM:
             self.chat_type[wxid] = 'code'
             return '已切换#代码模式 \n代码模式可以用于写python代码，例如：\n用python画一个爱心'
         elif '#清除模式会话' == question or '#4' == question:
-            self.conversation_list[wxid][self.chat_type[wxid]
-            ] = self.system_content_msg[self.chat_type[wxid]]
+            self.conversation_list[wxid][self.chat_type[wxid]] = self.system_content_msg[self.chat_type[wxid]]
             return '已清除'
         elif '#清除全部会话' == question or '#5' == question:
             self.conversation_list[wxid] = self.system_content_msg

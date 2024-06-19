@@ -29,38 +29,37 @@ class Chengyu(object):
     def isChengyu(self, cy: str) -> bool:
         return self.cys.get(cy, None) is not None
 
-    def getNext(self, cy: str, tongyin: bool = True) -> str:
+    def getNext(self, current_idiom: str, allow_homophone: bool = True) -> str:
         """获取下一个成语
-            cy: 当前成语
-            tongyin: 是否允许同音字
+            current_idiom: 当前成语
+            allow_homophone: 是否允许同音字
         """
-        zi = cy[-1]
-        ansers = list(self.zis.get(zi, {}))
+        last_char = current_idiom[-1]
+        candidates = list(self.zis.get(last_char, {}))
         try:
-            ansers.remove(cy)  # 移除当前成语
-        except Exception as e:
+            candidates.remove(current_idiom)  # 移除当前成语
+        except ValueError:
             pass  # Just ignore...
 
-        if ansers:
-            return random.choice(ansers)
+        if candidates:
+            return random.choice(candidates)
 
         # 如果找不到同字，允许同音
-        if tongyin:
-            yin = self.cys.get(cy)
-            ansers = list(self.yins.get(yin, {}))
+        if allow_homophone:
+            pronunciation = self.cys.get(current_idiom)
+            candidates = list(self.yins.get(pronunciation, {}))
+            try:
+                candidates.remove(current_idiom)  # 移除当前成语
+            except ValueError:
+                pass  # Just ignore...
 
-        try:
-            ansers.remove(cy)  # 移除当前成语
-        except Exception as e:
-            pass  # Just ignore...
-
-        if ansers:
-            return random.choice(ansers)
+            if candidates:
+                return random.choice(candidates)
 
         return None
 
-    def getMeaning(self, cy: str) -> str:
-        ress = self.df[self.df["chengyu"] == cy].to_dict(orient="records")
+    def getMeaning(self, chengyu: str) -> str:
+        ress = self.df[self.df["chengyu"] == chengyu].to_dict(orient="records")
         if ress:
             res = ress[0]
             rsp = res["chengyu"] + "\n" + res["pingyin"] + "\n" + res["jieshi"]
