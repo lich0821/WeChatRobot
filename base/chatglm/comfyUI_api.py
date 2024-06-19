@@ -34,8 +34,8 @@ class ComfyUIApi():
                 "subfolder": subfolder, "type": folder_type}
         url_values = urllib.parse.urlencode(data)
         with requests.get("http://{}/view?{}".format(self.server_address, url_values)) as response:
-            image = Image.open(io.BytesIO(response.content))
-            return image
+            img = Image.open(io.BytesIO(response.content))
+            return img
 
     def get_image_url(self, filename, subfolder, folder_type):
         data = {"filename": filename,
@@ -47,8 +47,8 @@ class ComfyUIApi():
         with requests.get("http://{}/history/{}".format(self.server_address, prompt_id)) as response:
             return json.loads(response.text)
 
-    def get_images(self, prompt, isUrl=False):
-        prompt_id = self.queue_prompt(prompt)['prompt_id']
+    def get_images(self, prompt_arg, isUrl=False):
+        prompt_id = self.queue_prompt(prompt_arg)['prompt_id']
         output_images = []
         while True:
             out = self.ws.recv()
@@ -62,15 +62,13 @@ class ComfyUIApi():
                 continue  # previews are binary data
 
         history = self.get_history(prompt_id)[prompt_id]
-        for o in history['outputs']:
-            for node_id in history['outputs']:
-                node_output = history['outputs'][node_id]
-                if 'images' in node_output:
-                    for image in node_output['images']:
-                        image_data = self.get_image_url(image['filename'], image['subfolder'], image['type']) if isUrl else self.get_image(
-                            image['filename'], image['subfolder'], image['type'])
-                        image['image'] = image_data
-                        output_images.append(image)
+        for _node_id in history['outputs']:
+            node_output = history['outputs'][_node_id]
+            if 'images' in node_output:
+                for img_data in node_output['images']:
+                    img_url = self.get_image_url(img_data['filename'], img_data['subfolder'], img_data['type']) if isUrl else self.get_image(
+                        img_data['filename'], img_data['subfolder'], img_data['type'])
+                    output_images.append({'image': img_url})
 
         return output_images
 

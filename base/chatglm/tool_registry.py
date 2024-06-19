@@ -117,7 +117,6 @@ def get_weather(
         ret = {k: {_v: resp[k][0][_v] for _v in v}
                for k, v in key_selection.items()}
     except BaseException:
-        import traceback
         ret = "Error encountered while fetching weather data!\n" + traceback.format_exc()
 
     return str(ret)
