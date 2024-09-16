@@ -1,7 +1,7 @@
 # WeChatRobot
 一个基于 [WeChatFerry](https://github.com/lich0821/WeChatFerry) 的微信机器人示例。
 
-|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/bdPNrbJYoXhezCzHMqLoEw)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
+|[📖 文档](https://wechatferry.readthedocs.io/)|[📺 视频教程](https://mp.weixin.qq.com/s/APdjGyZ2hllXxyG_sNCfXQ)|[🙋 FAQ](https://mp.weixin.qq.com/s/Y2Q37VYV730Iu9TrgiCmCw)|[🚨【微信机器人】沙雕行为合集](https://mp.weixin.qq.com/s/mc8O5iuhy46X4Bgqs80E8g)|
 |:-:|:-:|:-:|:-:|
 
 |![碲矿](https://s2.loli.net/2023/09/25/fub5VAPSa8srwyM.jpg)|![赞赏](https://s2.loli.net/2023/09/25/gkh9uWZVOxzNPAX.jpg)|
@@ -14,7 +14,7 @@
     - 按照步骤来，版本保持一致，少走弯路。
     - 按照步骤来，版本保持一致，少走弯路。
 1. 安装 Python>=3.9（Python 12 需要自己编译依赖，慎选），例如 [3.10.11](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
-2. 安装微信 `3.9.2.23`，下载地址在 [这里](https://github.com/lich0821/WeChatFerry/releases/latest)；也可以从 [WeChatSetup](https://gitee.com/lch0821/WeChatSetup) 找到。
+2. 安装微信 `3.9.10.27`，下载地址在 [这里](https://github.com/lich0821/WeChatRobot/releases/latest) 找到。
 3. 克隆项目
 ```sh
 git clone https://github.com/lich0821/WeChatRobot.git
@@ -143,10 +143,10 @@ bard: # -----bard配置这行不填-----
 ```
 
 ## HTTP
-如需要使用 HTTP 接口，请参考:
+如需要使用 HTTP 接口，请参考：
 * [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust），开箱即用：[快速开始](https://github.com/lich0821/wcf-client-rust?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)。
 
 * GoHttp（基于 Go），参考 [GoHttp README.MD](https://github.com/lich0821/WeChatFerry/blob/master/clients/gohttp/README.md)
 
-* ~~wcfhttp（基于 Python）~~
-❗ **wcfhttp 不再维护，有需要可以使用 [WcfRust](https://github.com/lich0821/wcf-client-rust) 或者 [GoHttp](clients/gohttp/README.md)。**
+## 更多客户端
+见 [WeChatFerry](https://github.com/lich0821/WeChatFerry?tab=readme-ov-file#python)。
