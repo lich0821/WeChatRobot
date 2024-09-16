@@ -80,6 +80,7 @@ python main.py -c 2
 >> 2. chatgpt 模型
 >> 3. 讯飞星火模型
 >> 4. chatglm 模型
+>> 7. Azure 模型
 
 6. 停止
 
@@ -103,12 +104,32 @@ groups:
   enable: [] # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom, 多个群用 `,` 分隔
 ```
 
+#### 管理用户（好友）的相应权限
+第一次运行前设置，所有通讯录中的好友都将初次设置为此权限。以后每次打开会更新好友列表，但是不会更新权限。如果需要重新配置默认权限，请删除**你的微信id_permission.db**文件，再重新运行程序。
+```yaml
+permission:
+  default: 2  # 默认权限
+  # 0:群聊和私聊都不响应; 1:群聊不响应，私聊响应; 2:群聊响应，私聊不响应; 3:群聊和私聊都响应
+```
+如果要更新某用户（好友）的权限，可以在浏览器打开 http://127.0.0.1:5000 查看用户（好友）的微信id，然后在点击Update 或者访问 http://127.0.0.1:5000/update 填入新的权限信息，然后进行更新。
+
+如果某用户不是好友，它第一次在群里中@你时，他的用户id会被记录到数据库中，默认权限为2，默认权限有效期为2099年。
+
+不在数据库中的用户无法使用Web更新权限，但可以使用别的方法向数据库中添加记录。
+
 #### 配置 AI 模型
 为了使用 AI 模型，需要对相应模型并进行配置。
 
 使用 ChatGLM 见注意事项 [README.MD](base/chatglm/README.MD)
 
 ```yaml
+azure:
+  key: # 填写你 Azure OpenAI API key
+  endpoint: https://XXXXXX.openai.azure.com/
+  deployment_name: XXXXXX
+  api_version: 2024-02-15-preview
+  prompt: 你是智能聊天机器人，你叫 wcferry  # 根据需要对角色进行设定
+
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key
   api: https://api.openai.com/v1  # 如果你不知道这是干嘛的，就不要改

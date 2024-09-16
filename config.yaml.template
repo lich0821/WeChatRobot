@@ -41,11 +41,22 @@ logging:
 groups:
   enable: []  # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom
 
+permission:
+  default: 2  # 默认权限
+  # 0:群聊和私聊都不响应; 1:群聊不响应，私聊响应; 2:群聊响应，私聊不响应; 3:群聊和私聊都响应
+
 news:
   receivers: []  # 定时新闻接收人（roomid 或者 wxid）
 
 report_reminder:
   receivers: []  # 定时日报周报月报提醒（roomid 或者 wxid）
+
+azure:
+  key: # 填写你 Azure OpenAI API key
+  endpoint: https://XXXXXX.openai.azure.com/
+  deployment_name: XXXXXX
+  api_version: 2024-02-15-preview
+  prompt: 你是智能聊天机器人，你叫 wcferry  # 根据需要对角色进行设定
 
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key
