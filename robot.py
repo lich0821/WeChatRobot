@@ -277,7 +277,7 @@ class Robot(Job):
         print("content: ", msg.content)
         print("id: {}", msg.id)
         print("extra: ", msg.extra)
-        img_path = "C:\\Users\\Administrator\\Desktop\\image\\"
+        img_path = "D:\\code\\WeChatRobot\\image\\"
         if msg.extra == "":
             rsp_msg = "这是一段文字消息\n小乖学舌:\n{}".format(msg.content)
             self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)

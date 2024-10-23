@@ -8,5 +8,6 @@ __pycache__
 logs/
 *.log
 *.log.*
+image/
 
 config.yaml
