@@ -114,7 +114,9 @@ class Robot(Job):
         """闲聊，接入 ChatGPT
         """
         if not self.chat:  # 没接 ChatGPT，固定回复
-            rsp = "你@我干嘛？"
+            # rsp = "你@我干嘛？"
+            rsp = "我是机器人，请不要私聊我"
+            # rsp = None
         else:  # 接了 ChatGPT，智能回复
             q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
             rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
@@ -143,7 +145,12 @@ class Robot(Job):
         if msg.from_group():
             # 如果在群里被 @
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
+                # print("xxxxxxx")
+                # self.toPandachat(msg)
                 return
+
+            if msg.roomid in self.config.GROUPS:
+                self.toPandachat(msg)
 
             if msg.is_at(self.wxid):  # 被@
                 self.toAt(msg)
@@ -263,3 +270,25 @@ class Robot(Job):
         news = News().get_important_news()
         for r in receivers:
             self.sendTextMsg(news, r)
+
+    def toPandachat(self, msg: WxMsg) -> bool:
+        """自定义回复
+        """
+        print("content: ", msg.content)
+        print("id: {}", msg.id)
+        print("extra: ", msg.extra)
+        img_path = "C:\\Users\\Administrator\\Desktop\\image\\"
+        if msg.extra == "":
+            rsp_msg = "这是一段文字消息\n小乖学舌:\n{}".format(msg.content)
+            self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
+        if msg.extra.endswith(".dat"):
+            extra_id = msg.extra.split('/')[-1].split('.dat')[0]
+            rsp_msg = "这是一张图片\nextra_id:\n{}".format(extra_id)
+            self.wcf.download_image(msg.id, msg.extra, img_path)
+            self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
+            self.wcf.send_image(img_path + extra_id + ".jpg", msg.roomid)
+        else:
+            return True
+
+        # self.wcf.download_image(msg.id, msg.extra, "C:\\Users\\Administrator\\Desktop\\image")
+        # self.sendTextMsg(rsp, msg.roomid, msg.sender)
