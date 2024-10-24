@@ -291,8 +291,7 @@ class Robot(Job):
             # # 图片base64加密
             img_base_64 = img_ocr.image_to_base64(img_path + extra_id + ".jpg")
 
-            secretid = "AKIDhUDkKsIeqtkV6wb3JNEyd7PTPAh6QZeV"
-            secretkey = "nU7dcXHqERRDm7GqJ9vXAelrw4JRVTN8"
+
             response = img_ocr.perform_ocr(secretid, secretkey, img_base_64)
             rsp_msg = img_ocr.main(response)
             self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
