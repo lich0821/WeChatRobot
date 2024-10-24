@@ -120,8 +120,7 @@ def main(response):
            "宝箱周: {:.2f}轮\n"
            "不开木箱: {:.2f}轮\n"
            "不开铂金: {:.2f}轮\n"
-           "------------------\n"
-           "测试测试".format(wood,
+           "------------------".format(wood,
                                       points_wood,
                                       bronze,
                                       points_bronze,
