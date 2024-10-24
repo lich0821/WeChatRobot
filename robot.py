@@ -21,6 +21,8 @@ from configuration import Config
 from constants import ChatType
 from job_mgmt import Job
 
+import img_ocr
+
 __version__ = "39.2.4.0"
 
 
@@ -278,15 +280,24 @@ class Robot(Job):
         print("id: {}", msg.id)
         print("extra: ", msg.extra)
         img_path = "D:\\code\\WeChatRobot\\image\\"
-        if msg.extra == "":
-            rsp_msg = "这是一段文字消息\n小乖学舌:\n{}".format(msg.content)
-            self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
+        # if msg.extra == "":
+        #     rsp_msg = "这是一段文字消息\n小乖学舌:\n{}".format(msg.content)
+        #     self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
         if msg.extra.endswith(".dat"):
             extra_id = msg.extra.split('/')[-1].split('.dat')[0]
-            rsp_msg = "这是一张图片\nextra_id:\n{}".format(extra_id)
+            # rsp_msg = "这是一张图片\nextra_id:\n{}".format(extra_id)
             self.wcf.download_image(msg.id, msg.extra, img_path)
+
+            # # 图片base64加密
+            img_base_64 = img_ocr.image_to_base64(img_path + extra_id + ".jpg")
+
+            secretid = "AKIDhUDkKsIeqtkV6wb3JNEyd7PTPAh6QZeV"
+            secretkey = "nU7dcXHqERRDm7GqJ9vXAelrw4JRVTN8"
+            response = img_ocr.perform_ocr(secretid, secretkey, img_base_64)
+            rsp_msg = img_ocr.main(response)
             self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
-            self.wcf.send_image(img_path + extra_id + ".jpg", msg.roomid)
+            # self.wcf.send_image(img_path + extra_id + ".jpg", msg.roomid)
+
         else:
             return True
 
