@@ -28,6 +28,7 @@ def weather_report(robot: Robot) -> None:
 
 def main(chat_type: int):
     config = Config()
+
     wcf = Wcf(debug=True)
 
     def handler(sig, frame):
