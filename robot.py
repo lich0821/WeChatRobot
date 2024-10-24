@@ -290,8 +290,9 @@ class Robot(Job):
             secretkey = self.config.AKSK.get("secretkey")
             response = img_ocr.perform_ocr(secretid, secretkey, img_base_64)
             rsp_msg = img_ocr.count_box(response)
-            # 返回消息
-            self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
+            if rsp_msg is not None:
+                # 返回消息
+                self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
 
         else:
             return True
