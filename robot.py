@@ -148,7 +148,7 @@ class Robot(Job):
                 return
 
             if msg.roomid in self.config.GROUPS:
-                self.toimagechat(msg)
+                self.toImageChat(msg)
 
             if msg.is_at(self.wxid):  # 被@
                 self.toAt(msg)
@@ -269,7 +269,7 @@ class Robot(Job):
         for r in receivers:
             self.sendTextMsg(news, r)
 
-    def toimagechat(self, msg: WxMsg) -> bool:
+    def toImageChat(self, msg: WxMsg) -> bool:
         """自定义回复
         """
         print("content: ", msg.content)
@@ -289,7 +289,7 @@ class Robot(Job):
             secretid = self.config.AKSK.get("secretid")
             secretkey = self.config.AKSK.get("secretkey")
             response = img_ocr.perform_ocr(secretid, secretkey, img_base_64)
-            rsp_msg = img_ocr.main(response)
+            rsp_msg = img_ocr.count_box(response)
             # 返回消息
             self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)
 

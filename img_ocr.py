@@ -55,6 +55,7 @@ def perform_ocr(secretid, secretkey, img_base_64, region="ap-beijing"):
         print(err)
         return None
 
+
 def points(string, num):
     return int(string) * num
 
@@ -92,7 +93,9 @@ def sort_and_filter_unique_x_texts(data):
 
     return unique_sorted_x_texts
 
-def main(response):
+
+# 宝箱积分计算
+def count_box(response):
     # 宝箱积分
     sorted_unique_x_texts = sort_and_filter_unique_x_texts(response['TextDetections'])
 
@@ -120,8 +123,7 @@ def main(response):
            "宝箱周: {:.2f}轮\n"
            "不开木箱: {:.2f}轮\n"
            "不开铂金: {:.2f}轮\n"
-           "------------------\n"
-           "测试测试".format(wood,
+           "------------------".format(wood,
                                       points_wood,
                                       bronze,
                                       points_bronze,
