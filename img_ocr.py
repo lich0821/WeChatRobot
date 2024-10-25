@@ -102,7 +102,20 @@ def extract_values(response, keywords):
         for keyword in keywords:
             if keyword in detected_text:
                 try:
-                    values[keyword] = int(detected_text.split('x')[1])
+                    # 提取'x'后面的部分
+                    value_str = detected_text.split('x')[1]
+
+                    # 检查是否包含“万”或“亿”
+                    if '万' in value_str:
+                        value_str = value_str.replace('万', '')
+                        value = float(value_str) * 10000
+                    elif '亿' in value_str:
+                        value_str = value_str.replace('亿', '')
+                        value = float(value_str) * 100000000
+                    else:
+                        value = int(value_str)
+
+                    values[keyword] = int(value)
                 except (IndexError, ValueError):
                     values[keyword] = 0
     return values
@@ -170,7 +183,7 @@ def process_response(response):
         integral_msg = calculate_difference(formatted_integral, 8.50, "宝箱积分")
         gold_msg = calculate_difference(values.get('金砖x', 0), 250000, "金砖")
 
-        msg = "{}\n{}\n{}\n{}\n推荐资源参考：25w金砖,3300招募,8.5轮积分,700金鱼竿,请根据实际情况分析".format(
+        msg = "{}\n{}\n{}轮\n{}\n推荐资源参考：25w金砖,3300招募,8.5轮积分,700金鱼竿,请根据实际情况分析".format(
             fish_msg, recruit_msg, integral_msg, gold_msg)
         return msg
 
