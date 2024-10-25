@@ -272,9 +272,9 @@ class Robot(Job):
     def toImageChat(self, msg: WxMsg) -> bool:
         """自定义回复
         """
-        print("content: ", msg.content)
-        print("id: {}", msg.id)
-        print("extra: ", msg.extra)
+        # print("content: ", msg.content)
+        # print("id: {}", msg.id)
+        # print("extra: ", msg.extra)
         img_path = "D:\\code\\WeChatRobot\\image\\"
         # if msg.extra == "":
         #     rsp_msg = "这是一段文字消息\n小乖学舌:\n{}".format(msg.content)
@@ -289,7 +289,7 @@ class Robot(Job):
             secretid = self.config.AKSK.get("secretid")
             secretkey = self.config.AKSK.get("secretkey")
             response = img_ocr.perform_ocr(secretid, secretkey, img_base_64)
-            rsp_msg = img_ocr.count_box(response)
+            rsp_msg = img_ocr.process_response(response)
             if rsp_msg is not None:
                 # 返回消息
                 self.sendTextMsg(rsp_msg, msg.roomid, msg.sender)

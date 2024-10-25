@@ -94,26 +94,43 @@ def contains_all_keywords_combined(text_detections, keywords):
     return all(keyword in combined_text for keyword in keywords)
 
 
-# 宝箱积分计算
-def count_box(response):
-    # 过滤response内容关键字
-    keywords = ["宝箱", "积分领取", "抽到紫将概率", "打开", "个宝箱"]
-    if contains_all_keywords_combined(response['TextDetections'], keywords):
-        # 宝箱积分
+def extract_values(response, keywords):
+    values = {}
+    for detection in response['TextDetections']:
+        detected_text = detection['DetectedText']
+        for keyword in keywords:
+            if keyword in detected_text:
+                try:
+                    values[keyword] = int(detected_text.split('x')[1])
+                except (IndexError, ValueError):
+                    values[keyword] = 0
+    return values
+
+
+def calculate_points(wood, bronze, gold, platinum):
+    return points(wood, 1), points(bronze, 10), points(gold, 20), points(platinum, 50)
+
+
+def format_integral(points_all, divisor=3340):
+    return float(f"{points_all / divisor:.2f}")
+
+
+def calculate_difference(current, initial, name):
+    if current < initial:
+        return f"{name}不足，还差: {initial - current}"
+    return f"{name}满足，超出: {current - initial}"
+
+
+def process_response(response):
+    box_keywords = ["宝箱", "积分领取", "抽到紫将概率", "打开", "个宝箱"]
+    fish_keywords = ["黄金鱼竿", "招募令", "金砖", "木质宝箱", "青铜宝箱", "黄金宝箱", "铂金宝箱"]
+
+    if contains_all_keywords_combined(response['TextDetections'], box_keywords):
         sorted_unique_x_texts = sort_and_filter_x_texts(response['TextDetections'])
+        wood_box, bronze_box, gold_box, platinum_box = [text.replace('X', '') for text in sorted_unique_x_texts[:4]]
 
-        wood, bronze, gold, platinum = [text.replace('X', '') for text in sorted_unique_x_texts[:4]]
-
-        # 未使用积分
-        points_unclaimed = unclaimed(response["TextDetections"])
-
-        points_wood = points(wood, 1)
-        points_bronze = points(bronze, 10)
-        points_gold = points(gold, 20)
-        points_platinum = points(platinum, 50)
-
+        points_wood, points_bronze, points_gold, points_platinum = calculate_points(wood_box, bronze_box, gold_box, platinum_box)
         points_all = points_wood + points_bronze + points_gold + points_platinum
-
         points_no_wood = points_bronze + points_gold + points_platinum
         points_no_platinum = points_wood + points_bronze + points_gold
 
@@ -126,19 +143,31 @@ def count_box(response):
                "宝箱周: {:.2f}轮\n"
                "不开木箱: {:.2f}轮\n"
                "不开铂金: {:.2f}轮\n"
-               "------------------".format(wood,
-                                           points_wood,
-                                           bronze,
-                                           points_bronze,
-                                           gold,
-                                           points_gold,
-                                           platinum,
-                                           points_platinum,
-                                           points_all,
-                                           points_unclaimed,
-                                           points_all / 3340,
-                                           points_no_wood / 3340,
-                                           points_no_platinum / 3340))
+               "------------------".format(
+                   wood_box, points_wood, bronze_box, points_bronze,
+                   gold_box, points_gold, platinum_box, points_platinum,
+                   points_all, unclaimed(response["TextDetections"]),
+                   format_integral(points_all),
+                   format_integral(points_no_wood),
+                   format_integral(points_no_platinum)))
         return msg
-    else:
-        return None
+
+    elif contains_all_keywords_combined(response['TextDetections'], fish_keywords):
+        values = extract_values(response, fish_keywords)
+
+        points_wood, points_bronze, points_gold, points_platinum = calculate_points(
+            values.get('木质宝箱', 0), values.get('青铜宝箱', 0),
+            values.get('黄金宝箱', 0), values.get('铂金宝箱', 0))
+        points_all = points_wood + points_bronze + points_gold + points_platinum
+        formatted_integral = format_integral(points_all)
+
+        fish_msg = calculate_difference(values.get('黄金鱼竿', 0), 700, "金鱼竿数量")
+        recruit_msg = calculate_difference(values.get('招募令', 0), 3300, "招募令数量")
+        integral_msg = calculate_difference(formatted_integral, 8.50, "宝箱积分")
+        gold_msg = calculate_difference(values.get('金砖', 0), 250000, "金砖")
+
+        msg = "{}\n{}\n{}\n{}\n推荐资源参考：25w金砖,3300招募,8.5轮积分,700金鱼竿,请根据实际情况分析".format(
+            fish_msg, recruit_msg, integral_msg, gold_msg)
+        return msg
+
+    return None
