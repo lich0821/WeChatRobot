@@ -115,10 +115,13 @@ def format_integral(points_all, divisor=3340):
     return float(f"{points_all / divisor:.2f}")
 
 
-def calculate_difference(current, initial, name):
+def calculate_difference(current, initial, name, is_float=False):
+    difference = initial - current
+    if is_float or isinstance(current, float) or isinstance(initial, float):
+        difference = f"{difference:.2f}"
     if current < initial:
-        return f"{name}不足，还差: {initial - current}"
-    return f"{name}满足，超出: {current - initial}"
+        return f"{name}不足，还差: {difference}"
+    return f"{name}满足，超出: {difference}"
 
 
 def process_response(response):
