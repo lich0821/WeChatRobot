@@ -89,6 +89,7 @@ def sort_and_filter_x_texts(data):
 
 
 # 过滤非宝箱图片
+
 def contains_all_keywords_combined(text_detections, keywords):
     combined_text = " ".join(detection['DetectedText'] for detection in text_detections)
     return all(keyword in combined_text for keyword in keywords)
@@ -126,7 +127,7 @@ def calculate_difference(current, initial, name, is_float=False):
 
 def process_response(response):
     box_keywords = ["宝箱", "积分领取", "抽到紫将概率", "打开", "个宝箱"]
-    fish_keywords = ["黄金鱼竿", "招募令", "金砖", "木质宝箱", "青铜宝箱", "黄金宝箱", "铂金宝箱"]
+    fish_keywords = ["黄金鱼竿", "招募令", "金砖x", "木质宝箱", "青铜宝箱", "黄金宝箱", "铂金宝箱"]
 
     if contains_all_keywords_combined(response['TextDetections'], box_keywords):
         sorted_unique_x_texts = sort_and_filter_x_texts(response['TextDetections'])
@@ -167,7 +168,7 @@ def process_response(response):
         fish_msg = calculate_difference(values.get('黄金鱼竿', 0), 700, "金鱼竿数量")
         recruit_msg = calculate_difference(values.get('招募令', 0), 3300, "招募令数量")
         integral_msg = calculate_difference(formatted_integral, 8.50, "宝箱积分")
-        gold_msg = calculate_difference(values.get('金砖', 0), 250000, "金砖")
+        gold_msg = calculate_difference(values.get('金砖x', 0), 250000, "金砖")
 
         msg = "{}\n{}\n{}\n{}\n推荐资源参考：25w金砖,3300招募,8.5轮积分,700金鱼竿,请根据实际情况分析".format(
             fish_msg, recruit_msg, integral_msg, gold_msg)
