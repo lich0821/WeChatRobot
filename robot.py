@@ -12,7 +12,7 @@ from wcferry import Wcf, WxMsg
 
 from base.func_bard import BardAssistant
 from base.func_chatglm import ChatGLM
-from base.func_ollama import Ollama
+from func_ollama import Ollama
 from base.func_chatgpt import ChatGPT
 from base.func_chengyu import cy
 from base.func_news import News
