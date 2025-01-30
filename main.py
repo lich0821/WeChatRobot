@@ -5,6 +5,7 @@ import signal
 from argparse import ArgumentParser
 
 from base.func_report_reminder import ReportReminder
+from base.func_weather import get_weather
 from configuration import Config
 from constants import ChatType
 from robot import Robot, __version__
@@ -19,7 +20,7 @@ def weather_report(robot: Robot) -> None:
     receivers = ["filehelper"]
 
     # 获取天气，需要自己实现，可以参考 https://gitee.com/lch0821/WeatherScrapy 获取天气。
-    report = "这就是获取到的天气情况了"
+    report = get_weather("芜湖")
 
     for r in receivers:
         robot.sendTextMsg(report, r)
