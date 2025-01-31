@@ -15,6 +15,7 @@ from base.func_chatglm import ChatGLM
 from base.func_ollama import Ollama
 from base.func_chatgpt import ChatGPT
 from base.func_chengyu import cy
+from base.func_weather import get_weather
 from base.func_news import News
 from base.func_tigerbot import TigerBot
 from base.func_xinghuo_web import XinghuoWeb
@@ -118,6 +119,10 @@ class Robot(Job):
         """
         if not self.chat:  # 没接 ChatGPT，固定回复
             rsp = "你@我干嘛？"
+        elif "人工" in msg.content: # 如果消息中含有"人工“，则不使用ChatGPT
+            rsp = "梅好事助手正在通知人工处理"
+        elif "天气" in msg.content:  # 如果消息中含有"天气"，则不使用ChatGPT
+            rsp = "梅好事助手查询到芜湖天气为：\n" + get_weather("芜湖")
         else:  # 接了 ChatGPT，智能回复
             q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
             rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))

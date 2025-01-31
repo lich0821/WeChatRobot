@@ -32,12 +32,12 @@ class Ollama():
         try:
             self.conversation_list[wxid]
         except KeyError:
-            res=ollama.generate(model=self.model, prompt=self.prompt)
+            res=ollama.generate(model=self.model, prompt=self.prompt, keep_alive="30m")
             self.updateMessage(wxid, res["context"], "assistant")
         # wxid或者roomid,个人时为微信id，群消息时为群id
         rsp = ""
         try:
-            res=ollama.generate(model=self.model, prompt=question, context=self.conversation_list[wxid])
+            res=ollama.generate(model=self.model, prompt=question, context=self.conversation_list[wxid], keep_alive="30m")
             self.updateMessage(wxid, res["context"], "user")
             res_message = res["response"]
 
