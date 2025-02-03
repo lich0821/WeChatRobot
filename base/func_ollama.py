@@ -43,7 +43,8 @@ class Ollama():
 
             # 去除<think>标签对与内部内容
             res_message = res_message.split("</think>")[-1]
-            return res_message
+            # 去除开头的\n和空格
+            return res_message[2:]
         except Exception as e0:
             print(e0)
             self.LOG.error(f"发生未知错误：{str(e0)}")
