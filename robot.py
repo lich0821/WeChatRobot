@@ -12,8 +12,10 @@ from wcferry import Wcf, WxMsg
 
 from base.func_bard import BardAssistant
 from base.func_chatglm import ChatGLM
+from base.func_ollama import Ollama
 from base.func_chatgpt import ChatGPT
 from base.func_chengyu import cy
+from base.func_weather import Weather
 from base.func_news import News
 from base.func_tigerbot import TigerBot
 from base.func_xinghuo_web import XinghuoWeb
@@ -56,6 +58,8 @@ class Robot(Job):
                 self.chat = TigerBot(self.config.TIGERBOT)
             elif ChatGPT.value_check(self.config.CHATGPT):
                 self.chat = ChatGPT(self.config.CHATGPT)
+            elif Ollama.value_check(self.config.OLLAMA):
+                self.chat = Ollama(self.config.OLLAMA)
             elif XinghuoWeb.value_check(self.config.XINGHUO_WEB):
                 self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
             elif ChatGLM.value_check(self.config.CHATGLM):
@@ -263,3 +267,13 @@ class Robot(Job):
         news = News().get_important_news()
         for r in receivers:
             self.sendTextMsg(news, r)
+
+    def weatherReport(self) -> None:
+        receivers = self.config.WEATHER
+        if not receivers or not self.config.CITY_CODE:
+            self.LOG.warning("未配置天气城市代码或接收人")
+            return
+
+        report = Weather(self.config.CITY_CODE).get_weather()
+        for r in receivers:
+            self.sendTextMsg(report, r)
