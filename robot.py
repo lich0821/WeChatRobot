@@ -95,7 +95,7 @@ class Robot(Job):
         :return: 处理状态，`True` 成功，`False` 失败
         """
         status = False
-        texts = re.findall(r"^([#|?|？])(.*)$", msg.content)
+        texts = re.findall(r"^([#?？])(.*)$", msg.content)
         # [('#', '天天向上')]
         if texts:
             flag = texts[0][0]
@@ -207,6 +207,8 @@ class Robot(Job):
         :param receiver: 接收人wxid或者群id
         :param at_list: 要@的wxid, @所有人的wxid为：notify@all
         """
+        # 随机延迟0.3-1.3秒，并且一分钟内发送限制
+        time.sleep(float(str(time.time()).split('.')[-1][-2:]) / 100.0 + 0.3)
         now = time.time()
         if self.config.SEND_RATE_LIMIT > 0:
             # 清除超过1分钟的记录
