@@ -40,3 +40,5 @@ class Config(object):
         self.CHATGLM = yconfig.get("chatglm", {})
         self.BardAssistant = yconfig.get("bard", {})
         self.ZhiPu = yconfig.get("zhipu", {})
+
+        self.SEND_RATE_LIMIT = yconfig.get("send_rate_limit", 0)
