@@ -95,7 +95,7 @@ class Robot(Job):
         :return: 处理状态，`True` 成功，`False` 失败
         """
         status = False
-        texts = re.findall(r"^([#|?|？])(.*)$", msg.content)
+        texts = re.findall(r"^([#?？])(.*)$", msg.content)
         # [('#', '天天向上')]
         if texts:
             flag = texts[0][0]
