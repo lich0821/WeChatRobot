@@ -36,6 +36,7 @@ class Robot(Job):
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
+        self._msg_timestamps = []
 
         if ChatType.is_in_chat_types(chat_type):
             if chat_type == ChatType.TIGER_BOT.value and TigerBot.value_check(self.config.TIGERBOT):
@@ -206,6 +207,15 @@ class Robot(Job):
         :param receiver: 接收人wxid或者群id
         :param at_list: 要@的wxid, @所有人的wxid为：notify@all
         """
+        now = time.time()
+        if self.config.SEND_RATE_LIMIT > 0:
+            # 清除超过1分钟的记录
+            self._msg_timestamps = [t for t in self._msg_timestamps if now - t < 60]
+            if len(self._msg_timestamps) >= self.config.SEND_RATE_LIMIT:
+                self.LOG.warning("发送消息过快，已达到每分钟"+self.config.SEND_RATE_LIMIT+"条上限。")
+                return
+            self._msg_timestamps.append(now)
+
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:

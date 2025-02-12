@@ -47,6 +47,9 @@ news:
 report_reminder:
   receivers: []  # 定时日报周报月报提醒（roomid 或者 wxid）
 
+# 消息发送速率限制：一分钟内最多发送6条消息
+send_rate_limit: 6
+
 weather:  # -----天气提醒配置这行不填-----
   city_code: 101010100 # 北京城市代码，如若需要其他城市，可参考base/main_city.json或者自寻城市代码填写
   receivers: ["filehelper"]  # 天气提醒接收人（roomid 或者 wxid）
