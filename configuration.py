@@ -22,6 +22,9 @@ class Config(object):
             with open(f"{pwd}/config.yaml", "rb") as fp:
                 yconfig = yaml.safe_load(fp)
 
+
+
+
         return yconfig
 
     def reload(self) -> None:
