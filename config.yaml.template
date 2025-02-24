@@ -25,6 +25,15 @@ logging:
       backupCount: 20
       encoding: utf8
 
+    warning_file_handler:
+      class: logging.handlers.RotatingFileHandler
+      level: WARNING
+      formatter: simple
+      filename: wx_warning.log
+      maxBytes: 10485760  # 10MB
+      backupCount: 20
+      encoding: utf8
+
     error_file_handler:
       class: logging.handlers.RotatingFileHandler
       level: ERROR
