@@ -81,7 +81,7 @@ ollama:  # -----ollama配置这行不填-----
   enable: true  # 是否启用 ollama
   model: deepseek-r1:1.5b # ollama-7b-sft
   prompt: 你是智能聊天机器人，你叫 梅好事  # 根据需要对角色进行设定
-  file_path: C:/Pictures/temp  #设定生成图片和代码使用的文件夹路径
+  file_path: d:/pictures/temp  #设定生成图片和代码使用的文件夹路径
 
 tigerbot:  # -----tigerbot配置这行不填-----
   key:  # key
