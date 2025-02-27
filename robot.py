@@ -51,6 +51,8 @@ class Robot(Job):
                 self.chat = BardAssistant(self.config.BardAssistant)
             elif chat_type == ChatType.ZhiPu.value and ZhiPu.value_check(self.config.ZhiPu):
                 self.chat = ZhiPu(self.config.ZhiPu)
+            elif chat_type == ChatType.OLLAMA.value and Ollama.value_check(self.config.OLLAMA):
+                self.chat = Ollama(self.config.OLLAMA)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
