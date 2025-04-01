@@ -140,6 +140,15 @@ bard: # -----bard配置这行不填-----
   # 提示词尽可能用英文，bard对中文提示词的效果不是很理想，下方提示词为英语老师的示例，请按实际需要修改,默认设置的提示词为谷歌创造的AI大语言模型
   # I want you to act as a spoken English teacher and improver. I will speak to you in English and you will reply to me in English to practice my spoken English. I want you to keep your reply neat, limiting the reply to 100 words. I want you to strictly correct my grammar mistakes, typos, and factual errors. I want you to ask me a question in your reply. Now let's start practicing, you could ask me a question first. Remember, I want you to strictly correct my grammar mistakes, typos, and factual errors.
   prompt: You am a large language model, trained by Google.
+
+deepseek: sk-xxxxxxxxxxxxxxx # -----deepseek配置这行不填-----
+  #思维链相关功能默认关闭，开启后会增加响应时间和消耗更多的token
+  key:  # 填写你的 DeepSeek API Key
+  api: https://api.deepseek.com  # DeepSeek API 地址
+  model: deepseek-chat  # 可选: deepseek-chat (DeepSeek-V3), deepseek-reasoner (DeepSeek-R1)
+  prompt: 你是智能聊天机器人，你叫 DeepSeek 助手  # 根据需要对角色进行设定
+  enable_reasoning: false  # 是否启用思维链功能，仅在使用 deepseek-reasoner 模型时有效
+  show_reasoning: false  # 是否在回复中显示思维过程，仅在启用思维链功能时有效
 ```
 
 ## HTTP
