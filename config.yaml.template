@@ -104,3 +104,9 @@ bard: # -----bard配置这行不填-----
 zhipu:  # -----zhipu配置这行不填-----
   api_key:  #api key
   model:   # 模型类型
+
+deepseek:  # -----deepseek配置这行不填-----
+  key:  # 填写你的 DeepSeek API Key
+  api: https://api.deepseek.com  # DeepSeek API 地址
+  model: deepseek-chat  # 可选: deepseek-chat (DeepSeek-V3), deepseek-reasoner (DeepSeek-R1)
+  prompt: 你是智能聊天机器人，你叫 DeepSeek 助手  # 根据需要对角色进行设定
