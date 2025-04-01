@@ -104,3 +104,12 @@ bard: # -----bard配置这行不填-----
 zhipu:  # -----zhipu配置这行不填-----
   api_key:  #api key
   model:   # 模型类型
+
+deepseek:  # -----deepseek配置这行不填-----
+  #思维链相关功能默认关闭，开启后会增加响应时间和消耗更多的token
+  key:  # 填写你的 DeepSeek API Key API Key的格式为sk-xxxxxxxxxxxxxxx
+  api: https://api.deepseek.com  # DeepSeek API 地址
+  model: deepseek-chat  # 可选: deepseek-chat (DeepSeek-V3), deepseek-reasoner (DeepSeek-R1)
+  prompt: 你是智能聊天机器人，你叫 DeepSeek 助手  # 根据需要对角色进行设定
+  enable_reasoning: false  # 是否启用思维链功能，仅在使用 deepseek-reasoner 模型时有效
+  show_reasoning: false  # 是否在回复中显示思维过程，仅在启用思维链功能时有效

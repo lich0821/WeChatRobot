@@ -14,6 +14,7 @@ from base.func_bard import BardAssistant
 from base.func_chatglm import ChatGLM
 from base.func_ollama import Ollama
 from base.func_chatgpt import ChatGPT
+from base.func_deepseek import DeepSeek
 from base.func_chengyu import cy
 from base.func_weather import Weather
 from base.func_news import News
@@ -53,6 +54,8 @@ class Robot(Job):
                 self.chat = ZhiPu(self.config.ZhiPu)
             elif chat_type == ChatType.OLLAMA.value and Ollama.value_check(self.config.OLLAMA):
                 self.chat = Ollama(self.config.OLLAMA)
+            elif chat_type == ChatType.DEEPSEEK.value and DeepSeek.value_check(self.config.DEEPSEEK):
+                self.chat = DeepSeek(self.config.DEEPSEEK)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
@@ -71,6 +74,8 @@ class Robot(Job):
                 self.chat = BardAssistant(self.config.BardAssistant)
             elif ZhiPu.value_check(self.config.ZhiPu):
                 self.chat = ZhiPu(self.config.ZhiPu)
+            elif DeepSeek.value_check(self.config.DEEPSEEK):
+                self.chat = DeepSeek(self.config.DEEPSEEK)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
@@ -216,7 +221,7 @@ class Robot(Job):
             # 清除超过1分钟的记录
             self._msg_timestamps = [t for t in self._msg_timestamps if now - t < 60]
             if len(self._msg_timestamps) >= self.config.SEND_RATE_LIMIT:
-                self.LOG.warning("发送消息过快，已达到每分钟"+self.config.SEND_RATE_LIMIT+"条上限。")
+                self.LOG.warning(f"发送消息过快，已达到每分钟{self.config.SEND_RATE_LIMIT}条上限。")
                 return
             self._msg_timestamps.append(now)
 
