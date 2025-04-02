@@ -16,3 +16,4 @@ ipykernel
 google-generativeai
 zhipuai>=1.0.0
 ollama
+dashscope
