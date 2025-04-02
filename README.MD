@@ -31,6 +31,8 @@ git clone https://gitee.com/lch0821/WeChatRobot.git
 python -m pip install -U pip
 # 安装必要依赖
 pip install -r requirements.txt
+# 国内用户可能会因为网络问题出现安装失败，届时可使用镜像源来下载
+pip install -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com -r requirements.txt
 # ChatGLM 还需要安装一个 kernel
 ipython kernel install --name chatglm3 --user
 ```
