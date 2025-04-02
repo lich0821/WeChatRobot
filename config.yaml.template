@@ -113,3 +113,14 @@ deepseek:  # -----deepseek配置这行不填-----
   prompt: 你是智能聊天机器人，你叫 DeepSeek 助手  # 根据需要对角色进行设定
   enable_reasoning: false  # 是否启用思维链功能，仅在使用 deepseek-reasoner 模型时有效
   show_reasoning: false  # 是否在回复中显示思维过程，仅在启用思维链功能时有效
+
+cogview:  # -----智谱AI图像生成配置这行不填-----
+  #此API请参考 https://www.bigmodel.cn/dev/api/image-model/cogview
+  enable: False  # 是否启用图像生成功能，默认关闭，将False替换为true则开启，此模型可和其他模型同时运行。
+  api_key:  # 智谱API密钥，请填入您的API Key
+  model: cogview-4-250304  # 模型编码，可选：cogview-4-250304、cogview-4、cogview-3-flash
+  quality: standard  # 生成质量，可选：standard（快速）、hd（高清）
+  size: 1024x1024  # 图片尺寸，可自定义，需符合条件
+  trigger_keyword: 画一张  # 触发图像生成的关键词
+  temp_dir:  # 临时文件存储目录，留空则默认使用项目目录下的zhipuimg文件夹，如果要更改，例如 D:/Pictures/temp 或 /home/user/temp
+  fallback_to_chat: true  # 当未启用绘画功能时：true=将请求发给聊天模型处理，false=回复固定的未启用提示信息

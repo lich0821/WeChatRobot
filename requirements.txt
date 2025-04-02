@@ -14,5 +14,5 @@ jupyter_client
 zhdate
 ipykernel
 google-generativeai
-zhipuai
+zhipuai>=1.0.0
 ollama
