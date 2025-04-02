@@ -115,7 +115,7 @@ deepseek:  # -----deepseek配置这行不填-----
   show_reasoning: false  # 是否在回复中显示思维过程，仅在启用思维链功能时有效
 
 cogview:  # -----智谱AI图像生成配置这行不填-----
-  #此API请参考 https://www.bigmodel.cn/dev/api/image-model/cogview
+  # 此API请参考 https://www.bigmodel.cn/dev/api/image-model/cogview
   enable: False  # 是否启用图像生成功能，默认关闭，将False替换为true则开启，此模型可和其他模型同时运行。
   api_key:  # 智谱API密钥，请填入您的API Key
   model: cogview-4-250304  # 模型编码，可选：cogview-4-250304、cogview-4、cogview-3-flash
