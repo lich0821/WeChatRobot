@@ -6,7 +6,9 @@ import time
 import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
+import os
 from base.func_zhipu import ZhiPu
+from base.func_cogview import CogView
 
 from wcferry import Wcf, WxMsg
 
@@ -82,6 +84,16 @@ class Robot(Job):
 
         self.LOG.info(f"已选择: {self.chat}")
 
+        if hasattr(self.config, 'COGVIEW') and CogView.value_check(self.config.COGVIEW):
+            self.cogview = CogView(self.config.COGVIEW)
+            self.LOG.info("图像生成服务已初始化")
+        else:
+            self.cogview = None
+            if hasattr(self.config, 'COGVIEW'):
+                self.LOG.info("图像生成服务未启用或配置不正确")
+            else:
+                self.LOG.info("配置中未找到COGVIEW配置部分")
+
     @staticmethod
     def value_check(args: dict) -> bool:
         if args:
@@ -93,6 +105,46 @@ class Robot(Job):
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
+        trigger = self.config.COGVIEW.get('trigger_keyword', '画一张') if hasattr(self.config, 'COGVIEW') else '画一张'
+        content = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+        if content.startswith(trigger):
+            if self.cogview and hasattr(self.config, 'COGVIEW') and self.config.COGVIEW.get('enable', False):
+                prompt = content[len(trigger):].strip()
+                if prompt:
+                    self.LOG.info(f"群聊中收到图像生成请求: {prompt}")
+                    self.sendTextMsg("正在生成图像，请稍等...", msg.roomid, msg.sender)
+                    image_url = self.cogview.generate_image(prompt)
+                    
+                    if image_url and image_url.startswith("http"):
+                        try:
+                            self.LOG.info(f"开始下载图片: {image_url}")
+                            image_path = self.cogview.download_image(image_url)
+                            
+                            if image_path:
+                                self.LOG.info(f"发送图片到群: {image_path}")
+                                self.wcf.send_image(image_path, msg.roomid)
+                                os.remove(image_path)  # 发送后删除临时文件
+                            else:
+                                self.LOG.warning(f"图片下载失败，发送URL链接作为备用: {image_url}")
+                                self.sendTextMsg(f"图像已生成，但无法自动显示，点链接也能查看:\n{image_url}", msg.roomid, msg.sender)
+                        except Exception as e:
+                            self.LOG.error(f"发送图片过程出错: {str(e)}")
+                            self.sendTextMsg(f"图像已生成，但发送过程出错，点链接也能查看:\n{image_url}", msg.roomid, msg.sender)
+                    else:
+                        self.LOG.error(f"图像生成失败: {image_url}")
+                        self.sendTextMsg(f"图像生成失败: {image_url}", msg.roomid, msg.sender)
+                    return True
+            else:
+                self.LOG.info("群聊中收到图像生成请求但功能未启用")
+                
+                fallback_to_chat = self.config.COGVIEW.get('fallback_to_chat', False) if hasattr(self.config, 'COGVIEW') else False
+                
+                if fallback_to_chat and self.chat:
+                    self.LOG.info("将画图请求转发给聊天模型处理")
+                    return self.toChitchat(msg)
+                else:
+                    self.sendTextMsg("报一丝，图像生成功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", msg.roomid, msg.sender)
+                    return True
         return self.toChitchat(msg)
 
     def toChengyu(self, msg: WxMsg) -> bool:
@@ -172,18 +224,57 @@ class Robot(Job):
         elif msg.type == 10000:  # 系统信息
             self.sayHiToNewFriend(msg)
 
-        elif msg.type == 0x01:  # 文本消息
-            # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
+        elif msg.type == 0x01:
             if msg.from_self():
                 if msg.content == "^更新$":
                     self.config.reload()
                     self.LOG.info("已更新")
             else:
+                trigger = self.config.COGVIEW.get('trigger_keyword', '画一张') if hasattr(self.config, 'COGVIEW') else '画一张'
+                if msg.content.startswith(trigger):
+                    if self.cogview and hasattr(self.config, 'COGVIEW') and self.config.COGVIEW.get('enable', False):
+                        prompt = msg.content[len(trigger):].strip()
+                        if prompt:
+                            self.LOG.info(f"收到图像生成请求: {prompt}")
+                            self.sendTextMsg("正在生成图像，请稍等...", msg.sender)
+                            image_url = self.cogview.generate_image(prompt)
+
+                            if image_url and image_url.startswith("http"):
+                                try:
+                                    self.LOG.info(f"开始下载图片: {image_url}")
+                                    image_path = self.cogview.download_image(image_url)
+
+                                    if image_path:
+                                        self.LOG.info(f"发送图片: {image_path}")
+                                        self.wcf.send_image(image_path, msg.sender)
+                                        os.remove(image_path)  # 发送后删除临时文件
+                                    else:
+                                        self.LOG.warning(f"图片下载失败，发送URL链接作为备用: {image_url}")
+                                        self.sendTextMsg(f"图像已生成，但无法自动显示，点链接也能查看:\n{image_url}", msg.sender)
+                                except Exception as e:
+                                    self.LOG.error(f"发送图片过程出错: {str(e)}")
+                                    self.sendTextMsg(f"图像已生成，但发送过程出错，点链接也能查看:\n{image_url}", msg.sender)
+                            else:
+                                self.LOG.error(f"图像生成失败: {image_url}")
+                                self.sendTextMsg(f"图像生成失败: {image_url}", msg.sender)
+                            return
+                    else:
+                        self.LOG.info("私聊中收到图像生成请求但功能未启用")
+                        
+                        fallback_to_chat = self.config.COGVIEW.get('fallback_to_chat', False) if hasattr(self.config, 'COGVIEW') else False
+                        
+                        if fallback_to_chat and self.chat:
+                            self.LOG.info("将画图请求转发给聊天模型处理")
+                            return self.toChitchat(msg)
+                        else:
+                            self.sendTextMsg("报一丝，图像生成功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", msg.sender)
+                            return
+
                 self.toChitchat(msg)  # 闲聊
 
     def onMsg(self, msg: WxMsg) -> int:
         try:
-            self.LOG.info(msg)  # 打印信息
+            self.LOG.info(msg)
             self.processMsg(msg)
         except Exception as e:
             self.LOG.error(e)
