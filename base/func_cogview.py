@@ -63,8 +63,14 @@ class CogView():
             else:
                 return "图像生成失败，未收到有效响应"
         except Exception as e:
-            self.LOG.error(f"图像生成出错: {str(e)}")
-            return f"图像生成出错: {str(e)}"
+            error_str = str(e)
+            self.LOG.error(f"图像生成出错: {error_str}")
+            
+            if "Error code: 500" in error_str or "HTTP/1.1 500" in error_str or "code\":\"1234\"" in error_str:
+                self.LOG.warning(f"检测到违规内容请求: {prompt}")
+                return "很抱歉，您的请求可能包含违规内容，无法生成图像"
+
+            return "图像生成失败，请调整您的描述后重试"
     
     def download_image(self, image_url: str) -> str:
         """
