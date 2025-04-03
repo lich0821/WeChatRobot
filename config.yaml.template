@@ -121,6 +121,16 @@ cogview:  # -----智谱AI图像生成配置这行不填-----
   model: cogview-4-250304  # 模型编码，可选：cogview-4-250304、cogview-4、cogview-3-flash
   quality: standard  # 生成质量，可选：standard（快速）、hd（高清）
   size: 1024x1024  # 图片尺寸，可自定义，需符合条件
-  trigger_keyword: 画一张  # 触发图像生成的关键词
+  trigger_keyword: 牛智谱  # 触发图像生成的关键词
   temp_dir:  # 临时文件存储目录，留空则默认使用项目目录下的zhipuimg文件夹，如果要更改，例如 D:/Pictures/temp 或 /home/user/temp
   fallback_to_chat: true  # 当未启用绘画功能时：true=将请求发给聊天模型处理，false=回复固定的未启用提示信息
+
+aliyun_image:  # -----如果要使用阿里云文生图，取消下面的注释并填写相关内容，模型到阿里云百炼找通义万相-文生图2.1-Turbo-----
+  enable: true  # 是否启用阿里文生图功能，false为关闭，默认开启，如果未配置，则会将消息发送给聊天大模型
+  api_key: sk-xxxxxxxxxxxxxxxxxxxxxxxx  # 替换为你的DashScope API密钥
+  model: wanx2.1-t2i-turbo  # 模型名称，默认使用wanx2.1-t2i-turbo(快),wanx2.1-t2i-plus（中）,wanx-v1（慢），会给用户不同的提示！
+  size: 1024*1024  # 图像尺寸，格式为宽*高
+  n: 1  # 生成图像的数量
+  temp_dir: ./temp  # 临时文件存储路径
+  trigger_keyword: 牛阿里  # 触发词，默认为"牛阿里"
+  fallback_to_chat: true  # 当服务不可用时是否转发给聊天模型处理

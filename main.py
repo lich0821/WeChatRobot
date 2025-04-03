@@ -24,7 +24,15 @@ def main(chat_type: int):
     robot.LOG.info(f"WeChatRobot【{__version__}】成功启动···")
 
     # 机器人启动发送测试消息
-    robot.sendTextMsg("机器人启动成功！", "filehelper")
+    # 机器人启动发送测试消息
+    robot.sendTextMsg("机器人启动成功！\n"
+                     "🎨 绘画功能使用说明：\n"
+                     "• 智谱绘画：牛智谱[描述]\n"
+                     "• 阿里绘画：牛阿里[描述]\n"
+                     "实例：\n"
+                     "牛阿里 画一张家乡\n"
+                     "@XX 牛阿里 画一张家乡\n"
+                     "💬 聊天时直接发送消息即可", "filehelper")
 
     # 接收消息
     # robot.enableRecvMsg()     # 可能会丢消息？

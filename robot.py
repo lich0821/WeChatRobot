@@ -7,8 +7,11 @@ import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
 import os
+import random
+import shutil
 from base.func_zhipu import ZhiPu
 from base.func_cogview import CogView
+from base.func_aliyun_image import AliyunImage
 
 from wcferry import Wcf, WxMsg
 
@@ -84,15 +87,27 @@ class Robot(Job):
 
         self.LOG.info(f"已选择: {self.chat}")
 
+        # 初始化图像生成服务
         if hasattr(self.config, 'COGVIEW') and CogView.value_check(self.config.COGVIEW):
             self.cogview = CogView(self.config.COGVIEW)
-            self.LOG.info("图像生成服务已初始化")
+            self.LOG.info("图像生成服务(CogView)已初始化")
         else:
             self.cogview = None
             if hasattr(self.config, 'COGVIEW'):
-                self.LOG.info("图像生成服务未启用或配置不正确")
+                self.LOG.info("图像生成服务(CogView)未启用或配置不正确")
             else:
                 self.LOG.info("配置中未找到COGVIEW配置部分")
+                
+        # 初始化阿里文生图服务
+        if hasattr(self.config, 'ALIYUN_IMAGE') and AliyunImage.value_check(self.config.ALIYUN_IMAGE):
+            self.aliyun_image = AliyunImage(self.config.ALIYUN_IMAGE)
+            self.LOG.info("阿里文生图服务已初始化")
+        else:
+            self.aliyun_image = None
+            if hasattr(self.config, 'ALIYUN_IMAGE'):
+                self.LOG.info("阿里文生图服务未启用或配置不正确")
+            else:
+                self.LOG.info("配置中未找到ALIYUN_IMAGE配置部分")
 
     @staticmethod
     def value_check(args: dict) -> bool:
@@ -100,51 +115,155 @@ class Robot(Job):
             return all(value is not None for key, value in args.items() if key != 'proxy')
         return False
 
+    def handle_image_generation(self, service_type, prompt, receiver, at_user=None):
+        """处理图像生成请求的通用函数
+        
+        :param service_type: 服务类型，'cogview'或'aliyun'
+        :param prompt: 图像生成提示词
+        :param receiver: 接收者ID
+        :param at_user: 被@的用户ID，用于群聊
+        :return: 处理状态，True成功，False失败
+        """
+        if service_type == 'cogview':
+            if not self.cogview or not hasattr(self.config, 'COGVIEW') or not self.config.COGVIEW.get('enable', False):
+                self.LOG.info(f"收到图像生成请求但功能未启用: {prompt}")
+                fallback_to_chat = self.config.COGVIEW.get('fallback_to_chat', False) if hasattr(self.config, 'COGVIEW') else False
+                if not fallback_to_chat:
+                    self.sendTextMsg("报一丝，图像生成功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
+                    return True
+                return False
+                
+            service = self.cogview
+            wait_message = "正在生成图像，请稍等..."
+            
+        elif service_type == 'aliyun':
+            if not self.aliyun_image or not hasattr(self.config, 'ALIYUN_IMAGE') or not self.config.ALIYUN_IMAGE.get('enable', False):
+                self.LOG.info(f"收到阿里文生图请求但功能未启用: {prompt}")
+                fallback_to_chat = self.config.ALIYUN_IMAGE.get('fallback_to_chat', False) if hasattr(self.config, 'ALIYUN_IMAGE') else False
+                if not fallback_to_chat:
+                    self.sendTextMsg("报一丝，阿里文生图功能没有开启，请联系管理员开启此功能。", receiver, at_user)
+                    return True
+                return False
+                
+            service = self.aliyun_image
+            model_type = self.config.ALIYUN_IMAGE.get('model', '')
+            if model_type == 'wanx2.1-t2i-plus':
+                wait_message = "当前模型为阿里PLUS模型，生成速度较慢，请耐心等候..."
+            elif model_type == 'wanx-v1':
+                wait_message = "当前模型为阿里V1模型，生成速度非常慢，可能需要等待较长时间，请耐心等候..."
+            else:
+                wait_message = "正在生成图像，请稍等..."
+        else:
+            self.LOG.error(f"未知的图像生成服务类型: {service_type}")
+            return False
+            
+        self.LOG.info(f"收到图像生成请求 [{service_type}]: {prompt}")
+        self.sendTextMsg(wait_message, receiver, at_user)
+        
+        image_url = service.generate_image(prompt)
+        
+        if image_url and image_url.startswith("http"):
+            try:
+                self.LOG.info(f"开始下载图片: {image_url}")
+                image_path = service.download_image(image_url)
+                
+                if image_path:
+                    # 创建一个临时副本，避免文件占用问题
+                    temp_dir = os.path.dirname(image_path)
+                    file_ext = os.path.splitext(image_path)[1]
+                    temp_copy = os.path.join(
+                        temp_dir,
+                        f"temp_{service_type}_{int(time.time())}_{random.randint(1000, 9999)}{file_ext}"
+                    )
+                    
+                    try:
+                        # 创建文件副本
+                        shutil.copy2(image_path, temp_copy)
+                        self.LOG.info(f"创建临时副本: {temp_copy}")
+                        
+                        # 发送临时副本
+                        self.LOG.info(f"发送图片到 {receiver}: {temp_copy}")
+                        self.wcf.send_image(temp_copy, receiver)
+                        
+                        # 等待一小段时间确保微信API完成处理
+                        time.sleep(1.5)
+                        
+                    except Exception as e:
+                        self.LOG.error(f"创建或发送临时副本失败: {str(e)}")
+                        # 如果副本处理失败，尝试直接发送原图
+                        self.LOG.info(f"尝试直接发送原图: {image_path}")
+                        self.wcf.send_image(image_path, receiver)
+                    
+                    # 安全删除文件
+                    self._safe_delete_file(image_path)
+                    if os.path.exists(temp_copy):
+                        self._safe_delete_file(temp_copy)
+                        
+                else:
+                    self.LOG.warning(f"图片下载失败，发送URL链接作为备用: {image_url}")
+                    self.sendTextMsg(f"图像已生成，但无法自动显示，点链接也能查看:\n{image_url}", receiver, at_user)
+            except Exception as e:
+                self.LOG.error(f"发送图片过程出错: {str(e)}")
+                self.sendTextMsg(f"图像已生成，但发送过程出错，点链接也能查看:\n{image_url}", receiver, at_user)
+        else:
+            self.LOG.error(f"图像生成失败: {image_url}")
+            self.sendTextMsg(f"图像生成失败: {image_url}", receiver, at_user)
+        
+        return True
+
+    def _safe_delete_file(self, file_path, max_retries=3, retry_delay=1.0):
+        """安全删除文件，带有重试机制
+        
+        :param file_path: 要删除的文件路径
+        :param max_retries: 最大重试次数
+        :param retry_delay: 重试间隔(秒)
+        :return: 是否成功删除
+        """
+        if not os.path.exists(file_path):
+            return True
+            
+        for attempt in range(max_retries):
+            try:
+                os.remove(file_path)
+                self.LOG.info(f"成功删除文件: {file_path}")
+                return True
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    self.LOG.warning(f"删除文件 {file_path} 失败, 将在 {retry_delay} 秒后重试: {str(e)}")
+                    time.sleep(retry_delay)
+                else:
+                    self.LOG.error(f"无法删除文件 {file_path} 经过 {max_retries} 次尝试: {str(e)}")
+        
+        return False
+
     def toAt(self, msg: WxMsg) -> bool:
         """处理被 @ 消息
         :param msg: 微信消息结构
         :return: 处理状态，`True` 成功，`False` 失败
         """
-        trigger = self.config.COGVIEW.get('trigger_keyword', '画一张') if hasattr(self.config, 'COGVIEW') else '画一张'
+        # CogView触发词
+        cogview_trigger = self.config.COGVIEW.get('trigger_keyword', '牛智谱') if hasattr(self.config, 'COGVIEW') else '牛智谱'
+        # 阿里文生图触发词
+        aliyun_trigger = self.config.ALIYUN_IMAGE.get('trigger_keyword', '牛阿里') if hasattr(self.config, 'ALIYUN_IMAGE') else '牛阿里'
+        
         content = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
-        if content.startswith(trigger):
-            if self.cogview and hasattr(self.config, 'COGVIEW') and self.config.COGVIEW.get('enable', False):
-                prompt = content[len(trigger):].strip()
-                if prompt:
-                    self.LOG.info(f"群聊中收到图像生成请求: {prompt}")
-                    self.sendTextMsg("正在生成图像，请稍等...", msg.roomid, msg.sender)
-                    image_url = self.cogview.generate_image(prompt)
-                    
-                    if image_url and image_url.startswith("http"):
-                        try:
-                            self.LOG.info(f"开始下载图片: {image_url}")
-                            image_path = self.cogview.download_image(image_url)
-                            
-                            if image_path:
-                                self.LOG.info(f"发送图片到群: {image_path}")
-                                self.wcf.send_image(image_path, msg.roomid)
-                                os.remove(image_path)  # 发送后删除临时文件
-                            else:
-                                self.LOG.warning(f"图片下载失败，发送URL链接作为备用: {image_url}")
-                                self.sendTextMsg(f"图像已生成，但无法自动显示，点链接也能查看:\n{image_url}", msg.roomid, msg.sender)
-                        except Exception as e:
-                            self.LOG.error(f"发送图片过程出错: {str(e)}")
-                            self.sendTextMsg(f"图像已生成，但发送过程出错，点链接也能查看:\n{image_url}", msg.roomid, msg.sender)
-                    else:
-                        self.LOG.error(f"图像生成失败: {image_url}")
-                        self.sendTextMsg(f"图像生成失败: {image_url}", msg.roomid, msg.sender)
+        
+        # 阿里文生图处理
+        if content.startswith(aliyun_trigger):
+            prompt = content[len(aliyun_trigger):].strip()
+            if prompt:
+                result = self.handle_image_generation('aliyun', prompt, msg.roomid, msg.sender)
+                if result:
                     return True
-            else:
-                self.LOG.info("群聊中收到图像生成请求但功能未启用")
                 
-                fallback_to_chat = self.config.COGVIEW.get('fallback_to_chat', False) if hasattr(self.config, 'COGVIEW') else False
-                
-                if fallback_to_chat and self.chat:
-                    self.LOG.info("将画图请求转发给聊天模型处理")
-                    return self.toChitchat(msg)
-                else:
-                    self.sendTextMsg("报一丝，图像生成功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", msg.roomid, msg.sender)
+        # 原有CogView处理
+        elif content.startswith(cogview_trigger):
+            prompt = content[len(cogview_trigger):].strip()
+            if prompt:
+                result = self.handle_image_generation('cogview', prompt, msg.roomid, msg.sender)
+                if result:
                     return True
+        
         return self.toChitchat(msg)
 
     def toChengyu(self, msg: WxMsg) -> bool:
@@ -230,44 +349,21 @@ class Robot(Job):
                     self.config.reload()
                     self.LOG.info("已更新")
             else:
-                trigger = self.config.COGVIEW.get('trigger_keyword', '画一张') if hasattr(self.config, 'COGVIEW') else '画一张'
-                if msg.content.startswith(trigger):
-                    if self.cogview and hasattr(self.config, 'COGVIEW') and self.config.COGVIEW.get('enable', False):
-                        prompt = msg.content[len(trigger):].strip()
-                        if prompt:
-                            self.LOG.info(f"收到图像生成请求: {prompt}")
-                            self.sendTextMsg("正在生成图像，请稍等...", msg.sender)
-                            image_url = self.cogview.generate_image(prompt)
-
-                            if image_url and image_url.startswith("http"):
-                                try:
-                                    self.LOG.info(f"开始下载图片: {image_url}")
-                                    image_path = self.cogview.download_image(image_url)
-
-                                    if image_path:
-                                        self.LOG.info(f"发送图片: {image_path}")
-                                        self.wcf.send_image(image_path, msg.sender)
-                                        os.remove(image_path)  # 发送后删除临时文件
-                                    else:
-                                        self.LOG.warning(f"图片下载失败，发送URL链接作为备用: {image_url}")
-                                        self.sendTextMsg(f"图像已生成，但无法自动显示，点链接也能查看:\n{image_url}", msg.sender)
-                                except Exception as e:
-                                    self.LOG.error(f"发送图片过程出错: {str(e)}")
-                                    self.sendTextMsg(f"图像已生成，但发送过程出错，点链接也能查看:\n{image_url}", msg.sender)
-                            else:
-                                self.LOG.error(f"图像生成失败: {image_url}")
-                                self.sendTextMsg(f"图像生成失败: {image_url}", msg.sender)
+                # 阿里文生图触发词处理
+                aliyun_trigger = self.config.ALIYUN_IMAGE.get('trigger_keyword', '牛阿里') if hasattr(self.config, 'ALIYUN_IMAGE') else '牛阿里'
+                if msg.content.startswith(aliyun_trigger):
+                    prompt = msg.content[len(aliyun_trigger):].strip()
+                    if prompt:
+                        result = self.handle_image_generation('aliyun', prompt, msg.sender)
+                        if result:
                             return
-                    else:
-                        self.LOG.info("私聊中收到图像生成请求但功能未启用")
-                        
-                        fallback_to_chat = self.config.COGVIEW.get('fallback_to_chat', False) if hasattr(self.config, 'COGVIEW') else False
-                        
-                        if fallback_to_chat and self.chat:
-                            self.LOG.info("将画图请求转发给聊天模型处理")
-                            return self.toChitchat(msg)
-                        else:
-                            self.sendTextMsg("报一丝，图像生成功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", msg.sender)
+                
+                cogview_trigger = self.config.COGVIEW.get('trigger_keyword', '牛智谱') if hasattr(self.config, 'COGVIEW') else '牛智谱'
+                if msg.content.startswith(cogview_trigger):
+                    prompt = msg.content[len(cogview_trigger):].strip()
+                    if prompt:
+                        result = self.handle_image_generation('cogview', prompt, msg.sender)
+                        if result:
                             return
 
                 self.toChitchat(msg)  # 闲聊
