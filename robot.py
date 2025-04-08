@@ -87,38 +87,40 @@ class Robot(Job):
         self.LOG.info(f"已选择: {self.chat}")
 
         # 初始化图像生成服务
-        if hasattr(self.config, 'COGVIEW') and CogView.value_check(self.config.COGVIEW):
-            self.cogview = CogView(self.config.COGVIEW)
-            self.LOG.info("图像生成服务(CogView)已初始化")
-        else:
-            self.cogview = None
-            if hasattr(self.config, 'COGVIEW'):
-                self.LOG.info("图像生成服务(CogView)未启用或配置不正确")
-            else:
-                self.LOG.info("配置中未找到COGVIEW配置部分")
-                
-        # 初始化阿里文生图服务
-        if hasattr(self.config, 'ALIYUN_IMAGE') and AliyunImage.value_check(self.config.ALIYUN_IMAGE):
-            self.aliyun_image = AliyunImage(self.config.ALIYUN_IMAGE)
-            self.LOG.info("阿里文生图服务已初始化")
-        else:
-            self.aliyun_image = None
-            if hasattr(self.config, 'ALIYUN_IMAGE'):
-                self.LOG.info("阿里文生图服务未启用或配置不正确")
-            else:
-                self.LOG.info("配置中未找到ALIYUN_IMAGE配置部分")
-                
-        # 初始化谷歌AI画图服务
-        if hasattr(self.config, 'GEMINI_IMAGE') and GeminiImage.value_check(self.config.GEMINI_IMAGE):
-            self.gemini_image = GeminiImage(self.config.GEMINI_IMAGE)
-            self.LOG.info("谷歌AI画图服务已初始化")
-        else:
-            self.gemini_image = None
+        self.cogview = None
+        self.aliyun_image = None
+        self.gemini_image = None
+        
+        # 优先初始化Gemini图像生成服务 - 确保默认启用
+        try:
+            # 不管配置如何，都强制初始化Gemini服务
             if hasattr(self.config, 'GEMINI_IMAGE'):
-                self.LOG.info("谷歌AI画图服务未启用或配置不正确")
+                self.gemini_image = GeminiImage(self.config.GEMINI_IMAGE)
             else:
-                self.LOG.info("配置中未找到GEMINI_IMAGE配置部分")
-
+                # 如果没有配置，使用空字典初始化，会使用默认值和环境变量
+                self.gemini_image = GeminiImage({})
+            
+            if self.gemini_image.enable:
+                self.LOG.info("谷歌Gemini图像生成功能已初始化并启用")
+            else:
+                self.LOG.info("谷歌AI画图功能未启用，未配置API密钥")
+        except Exception as e:
+            self.LOG.error(f"初始化谷歌Gemini图像生成服务失败: {str(e)}")
+        
+        # 初始化CogView和AliyunImage服务
+        if hasattr(self.config, 'COGVIEW') and self.config.COGVIEW.get('enable', False):
+            try:
+                self.cogview = CogView(self.config.COGVIEW)
+                self.LOG.info("智谱CogView文生图功能已初始化")
+            except Exception as e:
+                self.LOG.error(f"初始化智谱CogView文生图服务失败: {str(e)}")
+        if hasattr(self.config, 'ALIYUN_IMAGE') and self.config.ALIYUN_IMAGE.get('enable', False):
+            try:
+                self.aliyun_image = AliyunImage(self.config.ALIYUN_IMAGE)
+                self.LOG.info("阿里云文生图功能已初始化")
+            except Exception as e:
+                self.LOG.error(f"初始化阿里云文生图服务失败: {str(e)}")
+                
     @staticmethod
     def value_check(args: dict) -> bool:
         if args:
@@ -127,7 +129,6 @@ class Robot(Job):
 
     def handle_image_generation(self, service_type, prompt, receiver, at_user=None):
         """处理图像生成请求的通用函数
-        
         :param service_type: 服务类型，'cogview'/'aliyun'/'gemini'
         :param prompt: 图像生成提示词
         :param receiver: 接收者ID
@@ -142,10 +143,8 @@ class Robot(Job):
                     self.sendTextMsg("报一丝，智谱文生图功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
                     return True
                 return False
-                
             service = self.cogview
             wait_message = "正在生成图像，请稍等..."
-            
         elif service_type == 'aliyun':
             if not self.aliyun_image or not hasattr(self.config, 'ALIYUN_IMAGE') or not self.config.ALIYUN_IMAGE.get('enable', False):
                 self.LOG.info(f"收到阿里文生图请求但功能未启用: {prompt}")
@@ -154,7 +153,6 @@ class Robot(Job):
                     self.sendTextMsg("报一丝，阿里文生图功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
                     return True
                 return False
-                
             service = self.aliyun_image
             model_type = self.config.ALIYUN_IMAGE.get('model', '')
             if model_type == 'wanx2.1-t2i-plus':
@@ -163,15 +161,18 @@ class Robot(Job):
                 wait_message = "当前模型为阿里V1模型，生成速度非常慢，可能需要等待较长时间，请耐心等候..."
             else:
                 wait_message = "正在生成图像，请稍等..."
-                
         elif service_type == 'gemini':
-            if not self.gemini_image or not hasattr(self.config, 'GEMINI_IMAGE') or not self.config.GEMINI_IMAGE.get('enable', False):
-                self.LOG.info(f"收到谷歌AI画图请求但功能未启用: {prompt}")
-                fallback_to_chat = self.config.GEMINI_IMAGE.get('fallback_to_chat', False) if hasattr(self.config, 'GEMINI_IMAGE') else False
-                if not fallback_to_chat:
-                    self.sendTextMsg("报一丝，谷歌文生图功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
-                    return True
-                return False
+            if not self.gemini_image:
+                # 服务实例不存在的情况
+                self.LOG.info(f"收到谷歌AI画图请求但服务未初始化: {prompt}")
+                self.sendTextMsg("谷歌文生图服务初始化失败，请联系管理员检查日志", receiver, at_user)
+                return True
+                
+            # 直接检查API密钥是否有效
+            if not getattr(self.gemini_image, 'api_key', ''):
+                self.LOG.info(f"收到谷歌AI画图请求但API密钥未配置: {prompt}")
+                self.sendTextMsg("谷歌文生图功能需要配置API密钥，请联系管理员设置API密钥", receiver, at_user)
+                return True
                 
             service = self.gemini_image
             wait_message = "正在通过谷歌AI生成图像，请稍等..."
@@ -224,7 +225,7 @@ class Robot(Job):
                     self._safe_delete_file(image_path)
                     if os.path.exists(temp_copy):
                         self._safe_delete_file(temp_copy)
-                        
+                                   
                 else:
                     self.LOG.warning(f"图片下载失败，发送URL链接作为备用: {image_url}")
                     self.sendTextMsg(f"图像已生成，但无法自动显示，点链接也能查看:\n{image_url}", receiver, at_user)
@@ -296,9 +297,10 @@ class Robot(Job):
         elif content.startswith(gemini_trigger):
             prompt = content[len(gemini_trigger):].strip()
             if prompt:
-                result = self.handle_image_generation('gemini', prompt, msg.roomid, msg.sender)
-                if result:
-                    return True
+                return self.handle_image_generation('gemini', prompt, msg.roomid or msg.sender, msg.sender if msg.roomid else None)
+            else:
+                self.sendTextMsg(f"请在{gemini_trigger}后面添加您想要生成的图像描述", msg.roomid or msg.sender, msg.sender if msg.roomid else None)
+                return True
         
         return self.toChitchat(msg)
 

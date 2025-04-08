@@ -7,8 +7,8 @@ import os
 import mimetypes
 import time
 import random
-from google import genai
-from google.genai import types
+import google.generativeai as genai
+from google.generativeai import types
 
 class GeminiImage:
     """谷歌AI画图API调用
@@ -17,18 +17,20 @@ class GeminiImage:
     @staticmethod
     def value_check(args: dict) -> bool:
         try:
-            return bool(args and args.get("api_key", ""))
+            # 修改检查逻辑，如果配置存在就返回True
+            return bool(args)
         except Exception:
             return False
 
     def __init__(self, config={}) -> None:
         self.LOG = logging.getLogger("GeminiImage")
-        if not config:
-            raise Exception("缺少配置信息")
-            
-        self.api_key = config.get("api_key", "")
+        
+        # 默认值
+        self.enable = True
+        
+        # API密钥可以从环境变量获取或配置文件
+        self.api_key = config.get("api_key", "") or os.environ.get("GEMINI_API_KEY", "")
         self.model = config.get("model", "gemini-2.0-flash-exp-image-generation")
-        self.enable = config.get("enable", True)
         
         # 确定临时目录
         project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,8 +40,14 @@ class GeminiImage:
         # 确保临时目录存在
         if not os.path.exists(self.temp_dir):
             os.makedirs(self.temp_dir)
-            
-        self.LOG.info("GeminiImage 已初始化")
+            self.LOG.info(f"创建Gemini图像临时目录: {self.temp_dir}")
+        
+        # 验证API密钥是否有效
+        if not self.api_key:
+            self.LOG.warning("未配置谷歌Gemini API密钥，请在config.yaml中设置GEMINI_IMAGE.api_key或设置环境变量GEMINI_API_KEY")
+            # 虽然没有API密钥，但仍然保持服务启用，以便在handle_image_generation中显示友好错误消息
+        else:
+            self.LOG.info("谷歌Gemini图像生成功能已初始化并默认开启")
     
     def generate_image(self, prompt: str) -> str:
         """生成图像并返回图像文件路径或URL
@@ -70,16 +78,26 @@ class GeminiImage:
                 response_mime_type="text/plain",
             )
             
-            # 生成图片
-            response = client.models.generate_content(
+            # 使用流式模式生成图片
+            response_text = ""
+            image_path = None
+            
+            # 使用流式API获取响应
+            for chunk in client.models.generate_content_stream(
                 model=self.model,
                 contents=contents,
                 config=generate_content_config,
-            )
-            
-            # 处理响应
-            if response and response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
-                for part in response.candidates[0].content.parts:
+            ):
+                # 处理文本部分
+                if not chunk.candidates or not chunk.candidates[0].content or not chunk.candidates[0].content.parts:
+                    continue
+                    
+                for part in chunk.candidates[0].content.parts:
+                    # 处理文本
+                    if hasattr(part, 'text') and part.text:
+                        response_text += part.text
+                    
+                    # 处理图像数据
                     if hasattr(part, 'inline_data') and part.inline_data:
                         # 保存图片到临时文件
                         file_name = f"gemini_image_{int(time.time())}_{random.randint(1000, 9999)}"
@@ -90,9 +108,17 @@ class GeminiImage:
                             f.write(part.inline_data.data)
                         
                         self.LOG.info(f"图片已保存到: {file_path}")
-                        return file_path
+                        image_path = file_path
             
-            return "图像生成失败，未收到有效响应"
+            # 记录生成的文本响应
+            if response_text:
+                self.LOG.info(f"模型生成的文本响应: {response_text}")
+            
+            # 如果成功生成图像，返回路径
+            if image_path:
+                return image_path
+            else:
+                return "图像生成失败，未收到有效响应"
         
         except Exception as e:
             error_str = str(e)
@@ -102,7 +128,7 @@ class GeminiImage:
                 self.LOG.warning(f"检测到违规内容请求: {prompt}")
                 return "很抱歉，您的请求可能包含违规内容，无法生成图像"
                 
-            return "图像生成失败，请调整您的描述后重试"
+            return f"图像生成失败，请调整您的描述后重试: {error_str}"
     
     def download_image(self, image_path: str) -> str:
         """
