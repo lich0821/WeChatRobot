@@ -13,6 +13,7 @@ class Config(object):
     def __init__(self) -> None:
         self.COGVIEW = {}
         self.ALIYUN_IMAGE = {}
+        self.GEMINI_IMAGE = {}  # 确保GEMINI_IMAGE有默认值
         self.reload()
 
     def _load_config(self) -> dict:
@@ -46,4 +47,5 @@ class Config(object):
         self.DEEPSEEK = yconfig.get("deepseek", {})
         self.COGVIEW = yconfig.get("cogview", {})
         self.ALIYUN_IMAGE = yconfig.get("aliyun_image", {})
+        self.GEMINI_IMAGE = yconfig.get("gemini_image", {})
         self.SEND_RATE_LIMIT = yconfig.get("send_rate_limit", 0)
