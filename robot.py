@@ -10,8 +10,7 @@ import os
 import random
 import shutil
 from base.func_zhipu import ZhiPu
-from base.func_cogview import CogView
-from base.func_aliyun_image import AliyunImage
+from image import CogView, AliyunImage, GeminiImage
 
 from wcferry import Wcf, WxMsg
 
@@ -108,6 +107,17 @@ class Robot(Job):
                 self.LOG.info("阿里文生图服务未启用或配置不正确")
             else:
                 self.LOG.info("配置中未找到ALIYUN_IMAGE配置部分")
+                
+        # 初始化谷歌AI画图服务
+        if hasattr(self.config, 'GEMINI_IMAGE') and GeminiImage.value_check(self.config.GEMINI_IMAGE):
+            self.gemini_image = GeminiImage(self.config.GEMINI_IMAGE)
+            self.LOG.info("谷歌AI画图服务已初始化")
+        else:
+            self.gemini_image = None
+            if hasattr(self.config, 'GEMINI_IMAGE'):
+                self.LOG.info("谷歌AI画图服务未启用或配置不正确")
+            else:
+                self.LOG.info("配置中未找到GEMINI_IMAGE配置部分")
 
     @staticmethod
     def value_check(args: dict) -> bool:
@@ -118,7 +128,7 @@ class Robot(Job):
     def handle_image_generation(self, service_type, prompt, receiver, at_user=None):
         """处理图像生成请求的通用函数
         
-        :param service_type: 服务类型，'cogview'或'aliyun'
+        :param service_type: 服务类型，'cogview'/'aliyun'/'gemini'
         :param prompt: 图像生成提示词
         :param receiver: 接收者ID
         :param at_user: 被@的用户ID，用于群聊
@@ -126,10 +136,10 @@ class Robot(Job):
         """
         if service_type == 'cogview':
             if not self.cogview or not hasattr(self.config, 'COGVIEW') or not self.config.COGVIEW.get('enable', False):
-                self.LOG.info(f"收到图像生成请求但功能未启用: {prompt}")
+                self.LOG.info(f"收到智谱文生图请求但功能未启用: {prompt}")
                 fallback_to_chat = self.config.COGVIEW.get('fallback_to_chat', False) if hasattr(self.config, 'COGVIEW') else False
                 if not fallback_to_chat:
-                    self.sendTextMsg("报一丝，图像生成功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
+                    self.sendTextMsg("报一丝，智谱文生图功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
                     return True
                 return False
                 
@@ -141,7 +151,7 @@ class Robot(Job):
                 self.LOG.info(f"收到阿里文生图请求但功能未启用: {prompt}")
                 fallback_to_chat = self.config.ALIYUN_IMAGE.get('fallback_to_chat', False) if hasattr(self.config, 'ALIYUN_IMAGE') else False
                 if not fallback_to_chat:
-                    self.sendTextMsg("报一丝，阿里文生图功能没有开启，请联系管理员开启此功能。", receiver, at_user)
+                    self.sendTextMsg("报一丝，阿里文生图功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
                     return True
                 return False
                 
@@ -153,6 +163,18 @@ class Robot(Job):
                 wait_message = "当前模型为阿里V1模型，生成速度非常慢，可能需要等待较长时间，请耐心等候..."
             else:
                 wait_message = "正在生成图像，请稍等..."
+                
+        elif service_type == 'gemini':
+            if not self.gemini_image or not hasattr(self.config, 'GEMINI_IMAGE') or not self.config.GEMINI_IMAGE.get('enable', False):
+                self.LOG.info(f"收到谷歌AI画图请求但功能未启用: {prompt}")
+                fallback_to_chat = self.config.GEMINI_IMAGE.get('fallback_to_chat', False) if hasattr(self.config, 'GEMINI_IMAGE') else False
+                if not fallback_to_chat:
+                    self.sendTextMsg("报一丝，谷歌文生图功能没有开启，请联系管理员开启此功能。（可以贿赂他开启）", receiver, at_user)
+                    return True
+                return False
+                
+            service = self.gemini_image
+            wait_message = "正在通过谷歌AI生成图像，请稍等..."
         else:
             self.LOG.error(f"未知的图像生成服务类型: {service_type}")
             return False
@@ -162,10 +184,14 @@ class Robot(Job):
         
         image_url = service.generate_image(prompt)
         
-        if image_url and image_url.startswith("http"):
+        if image_url and (image_url.startswith("http") or os.path.exists(image_url)):
             try:
-                self.LOG.info(f"开始下载图片: {image_url}")
-                image_path = service.download_image(image_url)
+                self.LOG.info(f"开始处理图片: {image_url}")
+                # 谷歌API直接返回本地文件路径，无需下载
+                if service_type == 'gemini':
+                    image_path = image_url
+                else:
+                    image_path = service.download_image(image_url)
                 
                 if image_path:
                     # 创建一个临时副本，避免文件占用问题
@@ -245,6 +271,8 @@ class Robot(Job):
         cogview_trigger = self.config.COGVIEW.get('trigger_keyword', '牛智谱') if hasattr(self.config, 'COGVIEW') else '牛智谱'
         # 阿里文生图触发词
         aliyun_trigger = self.config.ALIYUN_IMAGE.get('trigger_keyword', '牛阿里') if hasattr(self.config, 'ALIYUN_IMAGE') else '牛阿里'
+        # 谷歌AI画图触发词
+        gemini_trigger = self.config.GEMINI_IMAGE.get('trigger_keyword', '牛谷歌') if hasattr(self.config, 'GEMINI_IMAGE') else '牛谷歌'
         
         content = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
         
@@ -256,11 +284,19 @@ class Robot(Job):
                 if result:
                     return True
                 
-        # 原有CogView处理
+        # CogView处理
         elif content.startswith(cogview_trigger):
             prompt = content[len(cogview_trigger):].strip()
             if prompt:
                 result = self.handle_image_generation('cogview', prompt, msg.roomid, msg.sender)
+                if result:
+                    return True
+        
+        # 谷歌AI画图处理
+        elif content.startswith(gemini_trigger):
+            prompt = content[len(gemini_trigger):].strip()
+            if prompt:
+                result = self.handle_image_generation('gemini', prompt, msg.roomid, msg.sender)
                 if result:
                     return True
         
@@ -358,11 +394,21 @@ class Robot(Job):
                         if result:
                             return
                 
+                # CogView触发词处理
                 cogview_trigger = self.config.COGVIEW.get('trigger_keyword', '牛智谱') if hasattr(self.config, 'COGVIEW') else '牛智谱'
                 if msg.content.startswith(cogview_trigger):
                     prompt = msg.content[len(cogview_trigger):].strip()
                     if prompt:
                         result = self.handle_image_generation('cogview', prompt, msg.sender)
+                        if result:
+                            return
+                
+                # 谷歌AI画图触发词处理
+                gemini_trigger = self.config.GEMINI_IMAGE.get('trigger_keyword', '牛谷歌') if hasattr(self.config, 'GEMINI_IMAGE') else '牛谷歌'
+                if msg.content.startswith(gemini_trigger):
+                    prompt = msg.content[len(gemini_trigger):].strip()
+                    if prompt:
+                        result = self.handle_image_generation('gemini', prompt, msg.sender)
                         if result:
                             return
 

@@ -13,7 +13,7 @@ pillow
 jupyter_client
 zhdate
 ipykernel
-google-generativeai
+google-generativeai>=0.3.0
 zhipuai>=1.0.0
 ollama
 dashscope
