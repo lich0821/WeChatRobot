@@ -142,3 +142,4 @@ gemini_image:  # -----谷歌AI画图配置这行不填-----
   temp_dir: ./geminiimg  # 图片保存目录，可选
   trigger_keyword: 牛谷歌  # 触发词，默认为"牛谷歌"
   fallback_to_chat: false  # 未启用时是否回退到聊天模式
+  proxy: http://127.0.0.1:7890  # 使用Clash代理，格式为：http://域名或者IP地址:端口号

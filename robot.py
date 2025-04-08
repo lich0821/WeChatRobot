@@ -102,8 +102,6 @@ class Robot(Job):
             
             if self.gemini_image.enable:
                 self.LOG.info("谷歌Gemini图像生成功能已初始化并启用")
-            else:
-                self.LOG.info("谷歌AI画图功能未启用，未配置API密钥")
         except Exception as e:
             self.LOG.error(f"初始化谷歌Gemini图像生成服务失败: {str(e)}")
         
@@ -117,7 +115,7 @@ class Robot(Job):
         if hasattr(self.config, 'ALIYUN_IMAGE') and self.config.ALIYUN_IMAGE.get('enable', False):
             try:
                 self.aliyun_image = AliyunImage(self.config.ALIYUN_IMAGE)
-                self.LOG.info("阿里云文生图功能已初始化")
+                self.LOG.info("阿里Aliyun功能已初始化")
             except Exception as e:
                 self.LOG.error(f"初始化阿里云文生图服务失败: {str(e)}")
                 
