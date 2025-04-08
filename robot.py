@@ -91,19 +91,17 @@ class Robot(Job):
         self.aliyun_image = None
         self.gemini_image = None
         
-        # 优先初始化Gemini图像生成服务 - 确保默认启用
+        # 初始化Gemini图像生成服务
         try:
-            # 不管配置如何，都强制初始化Gemini服务
             if hasattr(self.config, 'GEMINI_IMAGE'):
                 self.gemini_image = GeminiImage(self.config.GEMINI_IMAGE)
             else:
-                # 如果没有配置，使用空字典初始化，会使用默认值和环境变量
                 self.gemini_image = GeminiImage({})
             
-            if self.gemini_image.enable:
-                self.LOG.info("谷歌Gemini图像生成功能已初始化并启用")
+            if getattr(self.gemini_image, 'enable', False):
+                self.LOG.info("谷歌Gemini图像生成功能已启用")
         except Exception as e:
-            self.LOG.error(f"初始化谷歌Gemini图像生成服务失败: {str(e)}")
+            self.LOG.error(f"初始化谷歌Gemini图像生成服务失败: {e}")
         
         # 初始化CogView和AliyunImage服务
         if hasattr(self.config, 'COGVIEW') and self.config.COGVIEW.get('enable', False):
@@ -160,16 +158,8 @@ class Robot(Job):
             else:
                 wait_message = "正在生成图像，请稍等..."
         elif service_type == 'gemini':
-            if not self.gemini_image:
-                # 服务实例不存在的情况
-                self.LOG.info(f"收到谷歌AI画图请求但服务未初始化: {prompt}")
-                self.sendTextMsg("谷歌文生图服务初始化失败，请联系管理员检查日志", receiver, at_user)
-                return True
-                
-            # 直接检查API密钥是否有效
-            if not getattr(self.gemini_image, 'api_key', ''):
-                self.LOG.info(f"收到谷歌AI画图请求但API密钥未配置: {prompt}")
-                self.sendTextMsg("谷歌文生图功能需要配置API密钥，请联系管理员设置API密钥", receiver, at_user)
+            if not self.gemini_image or not getattr(self.gemini_image, 'enable', False):
+                self.sendTextMsg("谷歌文生图服务未启用", receiver, at_user)
                 return True
                 
             service = self.gemini_image
@@ -187,10 +177,7 @@ class Robot(Job):
             try:
                 self.LOG.info(f"开始处理图片: {image_url}")
                 # 谷歌API直接返回本地文件路径，无需下载
-                if service_type == 'gemini':
-                    image_path = image_url
-                else:
-                    image_path = service.download_image(image_url)
+                image_path = image_url if service_type == 'gemini' else service.download_image(image_url)
                 
                 if image_path:
                     # 创建一个临时副本，避免文件占用问题
