@@ -42,7 +42,7 @@ class AliyunImage():
         # 设置API密钥
         dashscope.api_key = self.api_key
         
-        self.LOG.info("AliyunImage 已初始化")
+        # 不要记录初始化日志
 
     def generate_image(self, prompt: str) -> str:
         """生成图像并返回图像URL

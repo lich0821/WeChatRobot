@@ -153,6 +153,15 @@ deepseek: sk-xxxxxxxxxxxxxxx # -----deepseek配置这行不填-----
   show_reasoning: false  # 是否在回复中显示思维过程，仅在启用思维链功能时有效
 ```
 
+## 至开发者
+```
+在接入图片生成的相关功能时，可将调用文件放入image文件夹内。
+在 image/__init__.py 文件内加入对应的模块儿，以便作为Python包来调用。
+在 configuration.py 内也要加入相关的代码，否则会初始化失败。
+文生图相关功能，全部默认开启，如果均未配置，全部转接至语言大模型。
+```
+[文生图功能的使用说明](./image/文生图功能的使用说明.MD)
+
 ## HTTP
 如需要使用 HTTP 接口，请参考：
 * [wcfrust](https://github.com/lich0821/wcf-client-rust)（基于 Rust），开箱即用：[快速开始](https://github.com/lich0821/wcf-client-rust?tab=readme-ov-file#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)。

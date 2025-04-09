@@ -34,10 +34,6 @@ class DeepSeek():
         
         self.system_content_msg = {"role": "system", "content": prompt}
         
-        reasoning_status = "开启" if self.enable_reasoning else "关闭"
-        reasoning_display = "显示" if self.show_reasoning else "隐藏" 
-        self.LOG.info(f"使用 DeepSeek 模型: {self.model}, 思维链功能: {reasoning_status}({reasoning_display}), 模型支持思维链: {'是' if self.reasoning_supported else '否'}")
-
     def __repr__(self):
         return 'DeepSeek'
 

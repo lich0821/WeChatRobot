@@ -21,7 +21,6 @@ class CogView():
         
         if self.api_key:
             self.client = ZhipuAI(api_key=self.api_key)
-            self.LOG.info(f"CogView 初始化成功，模型：{self.model}，质量：{self.quality}，图片保存目录：{self.temp_dir}")
         else:
             self.LOG.warning("未配置智谱API密钥，图像生成功能无法使用")
             self.client = None
