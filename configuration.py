@@ -11,9 +11,6 @@ import yaml
 
 class Config(object):
     def __init__(self) -> None:
-        self.COGVIEW = {}
-        self.ALIYUN_IMAGE = {}
-        self.GEMINI_IMAGE = {}  # 确保GEMINI_IMAGE有默认值
         self.reload()
 
     def _load_config(self) -> dict:
