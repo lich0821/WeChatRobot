@@ -49,6 +49,7 @@ logging:
 
 groups:
   enable: []  # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom
+  welcome_msg: "欢迎 {new_member} 加入群聊！\n请简单介绍一下自己吧~\n如果想和我聊天，可以@我"  # 新人入群欢迎消息，可使用{new_member}和{inviter}变量
 
 news:
   receivers: ["filehelper"]  # 定时新闻接收人（roomid 或者 wxid）

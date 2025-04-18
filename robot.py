@@ -385,6 +385,19 @@ class Robot(Job):
 
         # 群聊消息
         if msg.from_group():
+            # 检测新人加入群聊
+            if msg.type == 10000:
+                # 使用正则表达式匹配邀请加入群聊的消息
+                new_member_match = re.search(r'"(.+?)"邀请"(.+?)"加入了群聊', msg.content)
+                if new_member_match:
+                    inviter = new_member_match.group(1)  # 邀请人
+                    new_member = new_member_match.group(2)  # 新成员
+                    # 使用配置文件中的欢迎语，支持变量替换
+                    welcome_msg = self.config.WELCOME_MSG.format(new_member=new_member, inviter=inviter)
+                    self.sendTextMsg(welcome_msg, msg.roomid, msg.sender)
+                    self.LOG.info(f"已发送欢迎消息给新成员 {new_member} 在群 {msg.roomid}")
+                    return
+
             # 如果在群里被 @
             if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
