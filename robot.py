@@ -19,6 +19,7 @@ from base.func_chatglm import ChatGLM
 from base.func_ollama import Ollama
 from base.func_chatgpt import ChatGPT
 from base.func_deepseek import DeepSeek
+from base.func_perplexity import Perplexity
 from base.func_chengyu import cy
 from base.func_weather import Weather
 from base.func_news import News
@@ -60,6 +61,8 @@ class Robot(Job):
                 self.chat = Ollama(self.config.OLLAMA)
             elif chat_type == ChatType.DEEPSEEK.value and DeepSeek.value_check(self.config.DEEPSEEK):
                 self.chat = DeepSeek(self.config.DEEPSEEK)
+            elif chat_type == ChatType.PERPLEXITY.value and Perplexity.value_check(self.config.PERPLEXITY):
+                self.chat = Perplexity(self.config.PERPLEXITY)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
@@ -80,6 +83,8 @@ class Robot(Job):
                 self.chat = ZhiPu(self.config.ZhiPu)
             elif DeepSeek.value_check(self.config.DEEPSEEK):
                 self.chat = DeepSeek(self.config.DEEPSEEK)
+            elif Perplexity.value_check(self.config.PERPLEXITY):
+                self.chat = Perplexity(self.config.PERPLEXITY)
             else:
                 self.LOG.warning("未配置模型")
                 self.chat = None
@@ -259,6 +264,8 @@ class Robot(Job):
         aliyun_trigger = self.config.ALIYUN_IMAGE.get('trigger_keyword', '牛阿里') if hasattr(self.config, 'ALIYUN_IMAGE') else '牛阿里'
         # 谷歌AI画图触发词
         gemini_trigger = self.config.GEMINI_IMAGE.get('trigger_keyword', '牛谷歌') if hasattr(self.config, 'GEMINI_IMAGE') else '牛谷歌'
+        # Perplexity触发词
+        perplexity_trigger = self.config.PERPLEXITY.get('trigger_keyword', 'ask') if hasattr(self.config, 'PERPLEXITY') else 'ask'
         
         content = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
         
@@ -285,6 +292,37 @@ class Robot(Job):
                 return self.handle_image_generation('gemini', prompt, msg.roomid or msg.sender, msg.sender if msg.roomid else None)
             else:
                 self.sendTextMsg(f"请在{gemini_trigger}后面添加您想要生成的图像描述", msg.roomid or msg.sender, msg.sender if msg.roomid else None)
+                return True
+        
+        # Perplexity处理
+        elif content.startswith(perplexity_trigger):
+            prompt = content[len(perplexity_trigger):].strip()
+            if prompt:
+                # 获取Perplexity实例
+                if not hasattr(self, 'perplexity'):
+                    if hasattr(self.config, 'PERPLEXITY') and Perplexity.value_check(self.config.PERPLEXITY):
+                        self.perplexity = Perplexity(self.config.PERPLEXITY)
+                    else:
+                        self.sendTextMsg("Perplexity服务未配置", msg.roomid, msg.sender)
+                        return True
+                
+                # 使用现有的chat实例如果它是Perplexity
+                perplexity_instance = self.perplexity if hasattr(self, 'perplexity') else (self.chat if isinstance(self.chat, Perplexity) else None)
+                
+                if perplexity_instance:
+                    self.sendTextMsg("正在查询Perplexity，请稍候...", msg.roomid, msg.sender)
+                    response = perplexity_instance.get_answer(prompt, msg.roomid if msg.from_group() else msg.sender)
+                    if response:
+                        self.sendTextMsg(response, msg.roomid, msg.sender)
+                        return True
+                    else:
+                        self.sendTextMsg("无法从Perplexity获取回答", msg.roomid, msg.sender)
+                        return True
+                else:
+                    self.sendTextMsg("Perplexity服务未配置", msg.roomid, msg.sender)
+                    return True
+            else:
+                self.sendTextMsg(f"请在{perplexity_trigger}后面添加您的问题", msg.roomid, msg.sender)
                 return True
         
         return self.toChitchat(msg)
@@ -398,6 +436,38 @@ class Robot(Job):
                         result = self.handle_image_generation('gemini', prompt, msg.sender)
                         if result:
                             return
+                
+                # Perplexity触发词处理
+                perplexity_trigger = self.config.PERPLEXITY.get('trigger_keyword', 'ask') if hasattr(self.config, 'PERPLEXITY') else 'ask'
+                if msg.content.startswith(perplexity_trigger):
+                    prompt = msg.content[len(perplexity_trigger):].strip()
+                    if prompt:
+                        # 获取Perplexity实例
+                        if not hasattr(self, 'perplexity'):
+                            if hasattr(self.config, 'PERPLEXITY') and Perplexity.value_check(self.config.PERPLEXITY):
+                                self.perplexity = Perplexity(self.config.PERPLEXITY)
+                            else:
+                                self.sendTextMsg("Perplexity服务未配置", msg.sender)
+                                return
+                        
+                        # 使用现有的chat实例如果它是Perplexity
+                        perplexity_instance = self.perplexity if hasattr(self, 'perplexity') else (self.chat if isinstance(self.chat, Perplexity) else None)
+                        
+                        if perplexity_instance:
+                            self.sendTextMsg("正在查询Perplexity，请稍候...", msg.sender)
+                            response = perplexity_instance.get_answer(prompt, msg.sender)
+                            if response:
+                                self.sendTextMsg(response, msg.sender)
+                                return
+                            else:
+                                self.sendTextMsg("无法从Perplexity获取回答", msg.sender)
+                                return
+                        else:
+                            self.sendTextMsg("Perplexity服务未配置", msg.sender)
+                            return
+                    else:
+                        self.sendTextMsg(f"请在{perplexity_trigger}后面添加您的问题", msg.sender)
+                        return
 
                 self.toChitchat(msg)  # 闲聊
 

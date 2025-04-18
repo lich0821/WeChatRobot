@@ -42,6 +42,7 @@ class Config(object):
         self.BardAssistant = yconfig.get("bard", {})
         self.ZhiPu = yconfig.get("zhipu", {})
         self.DEEPSEEK = yconfig.get("deepseek", {})
+        self.PERPLEXITY = yconfig.get("perplexity", {})
         self.COGVIEW = yconfig.get("cogview", {})
         self.ALIYUN_IMAGE = yconfig.get("aliyun_image", {})
         self.GEMINI_IMAGE = yconfig.get("gemini_image", {})

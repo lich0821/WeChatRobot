@@ -143,3 +143,11 @@ gemini_image:  # -----谷歌AI画图配置这行不填-----
   trigger_keyword: 牛谷歌  # 触发词，默认为"牛谷歌"
   fallback_to_chat: false  # 未启用时是否回退到聊天模式
   proxy: http://127.0.0.1:7890  # 使用Clash代理，格式为：http://域名或者IP地址:端口号
+
+perplexity:  # -----perplexity配置这行不填-----
+  key:  # 填写你的Perplexity API Key
+  api: https://api.perplexity.ai  # API地址
+  proxy:  # 如果你在国内，你可能需要魔法，大概长这样：http://域名或者IP地址:端口号
+  model: mixtral-8x7b-instruct  # 可选模型包括：sonar-small-chat, sonar-medium-chat, sonar-pro, mixtral-8x7b-instruct等
+  prompt: 你是Perplexity AI助手，请用专业、准确、有帮助的方式回答问题  # 角色设定
+  trigger_keyword: ask  # 触发Perplexity服务的前置词
